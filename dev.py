@@ -1,16 +1,21 @@
 import subprocess
+import asyncio
+from discover.main import alpha_miner_alg, alpha_miner_quality
+#
+#
+# async def alph():
+#     file = '/home/ania/Desktop/trace_clustering/services/discover/test/Digital-Library-logs.csv'
+#     await alpha_miner_quality(file)
+#
+#
+#
+# async def main():
+#     await alph()
+#
+#
+# if __name__ == "__main__":
+#     asyncio.run(main())
 
-# file = '/home/ania/Desktop/test_app/discovery/test/Digital-Library-logs.csv'
-#
-# log_file = read_csv(file)
-#
-# temp_csv_file = '/tmp/temp_log_file.csv'
-# log_file.to_csv(temp_csv_file, index=False)
-#
-# # Construct the command string with the temporary CSV file path as an argument
-# command = f"Rscript discover/file.R {temp_csv_file}"
-
-# Execute the command using subprocess
 
 res = subprocess.call("Rscript discover/file.R", shell=True)
 
@@ -18,3 +23,5 @@ res
 #
 # def test():
 #     return "this is a test"
+#
+# print(test())

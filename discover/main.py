@@ -1,40 +1,24 @@
 import os
-from fastapi import FastAPI, UploadFile, File, APIRouter, HTTPException, Query,Request,  Depends
-from fastapi.responses import JSONResponse, Response
-from starlette.responses import FileResponse
 import pm4py
+from fastapi import FastAPI, UploadFile, File, APIRouter, HTTPException, Query,Request,  Depends
 from pm4py.algo.discovery.alpha import algorithm as alpha_miner
 from pm4py.visualization.petri_net import visualizer as pn_visualizer
 from pm4py.algo.discovery.alpha import variants
 from pm4py.algo.evaluation.generalization import algorithm as generalization_evaluator
 from pm4py.algo.evaluation.simplicity import algorithm as simplicity_evaluator
 from pm4py.objects.conversion.dfg.variants import to_petri_net_invisibles_no_duplicates
-from ..models.params import MiningResult
-from ..discover_utils import read_files, read_csv, latest_image
 import tempfile
 import subprocess
 
-
-
 async def alpha_miner_alg(file: UploadFile = File(...)):
-    try:
         log = await read_files(file)
-
         net, initial_marking, final_marking = alpha_miner.apply(log)
         gviz = pn_visualizer.apply(net, initial_marking, final_marking)
         pn_visualizer.view(gviz)
-        latest = latest_image()
-        return FileResponse(latest)
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 
 
-
-async def alpha_miner_alg(file: UploadFile = File(...)):
-    try:
+async def alpha_miner_quality(file: UploadFile = File(...)):
         log = await read_files(file)
-
         net, initial_marking, final_marking = alpha_miner.apply(log)
         # Model evaluation :
 
@@ -48,32 +32,20 @@ async def alpha_miner_alg(file: UploadFile = File(...)):
                    "Generalization": gen,
                    "Simplicity": simp}
 
-        return MiningResult(**results)
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return results
 
 
 # able to discover more complex connection, handle loops and connections effectively
 
 async def alpha_miner_plus(file: UploadFile = File(...)):
-    try:
         log = await read_files(file)
-
         net, initial_marking, final_marking = alpha_miner.apply(log, variant=variants.plus)
         gviz = pn_visualizer.apply(net, initial_marking, final_marking)
-
         pn_visualizer.view(gviz)
-
-        return FileResponse(latest_image())
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 
 
 
 async def alpha_miner_plus(file: UploadFile = File(...)):
-    try:
         log = await read_files(file)
         net, initial_marking, final_marking = alpha_miner.apply(log, variant=variants.plus)
         # Model evaluation
@@ -87,16 +59,12 @@ async def alpha_miner_plus(file: UploadFile = File(...)):
                    "Generalization": gen,
                    "Simplicity": simp}
 
-        return MiningResult(**results)
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return results
 
 
 
 
 async def freq_alpha_miner(file: UploadFile = File(...)):
-    try:
         log = await read_files(file)
 
         net, initial_marking, final_marking = alpha_miner.apply(log)
@@ -107,61 +75,22 @@ async def freq_alpha_miner(file: UploadFile = File(...)):
                                    log=log)
         pn_visualizer.view(gviz)
 
-        return FileResponse(latest_image())
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
 
 async def heuristic_miner(file: UploadFile = File(...)):
-    try:
         log = await read_files(file)
         heu_net = pm4py.discover_heuristics_net(log, activity_key='concept:name', case_id_key='case:concept:name',
                                                 timestamp_key='time:timestamp')
         pm4py.view_heuristics_net(heu_net)
 
-        latest = latest_image()
-
-        # Return the path to the saved image
-        return FileResponse(latest)
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
 
 async def heuristic_miner(file: UploadFile = File(...)):
-    try:
         log = await read_files(file)
-
         net, im, fm = pm4py.discover_petri_net_heuristics(log)
         pm4py.view_petri_net(net, im, fm)
-
-        # gen = generalization_evaluator.apply(log, net, im, fm)
-        # fitness = pm4py.fitness_token_based_replay(log, net, im, fm)
-        # prec = pm4py.precision_token_based_replay(log, net, im, fm)
-        # simp = simplicity_evaluator.apply(net)
-
-        latest = latest_image()
-
-        # result_data = {
-        #     "Generalization": str(gen),
-        #     "Precision": str(prec),
-        #     "Simplicity": str(simp),
-        #     "Fitness": str(fitness),
-        # }
-        #
-        # return FileResponse(latest, headers=result_data)
-        return FileResponse(latest)
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
 
 
 async def heuristic_params_threshold(file: UploadFile = File(...),
                                      value: float = Query(0.5, ge=0, le=1)):
-    try:
         log = await read_files(file)
 
         heu_net = pm4py.discover_heuristics_net(log, activity_key='concept:name', case_id_key='case:concept:name',
@@ -174,33 +103,18 @@ async def heuristic_params_threshold(file: UploadFile = File(...),
 
         pm4py.view_heuristics_net(heu_net)
 
-        return FileResponse(latest_image())
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
 
 async def inductive_miner(file: UploadFile = File(...),
                           noise_threshold: float = Query(0, ge=0, le=1)):
-    try:
         log = await read_files(file)
 
         # noise threshold: filters noisy behavior, activities that are infrequent and outliers
         net, initial_marking, final_marking = pm4py.discover_petri_net_inductive(log, noise_threshold)
         pn_visualizer.apply(net, initial_marking, final_marking).view()
 
-        return FileResponse(latest_image())
-
-        # return MiningResult(**result_data)
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
 
 async def inductive_miner(file: UploadFile = File(...),
                           noise_threshold: float = Query(0, ge=0, le=1)):
-    try:
         log = await read_files(file)
 
         # noise threshold: filters noisy behavior, activities that are infrequent and outliers
@@ -220,48 +134,27 @@ async def inductive_miner(file: UploadFile = File(...),
             "Simplicity": simp
         }
 
-        return MiningResult(**results)
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 
 
-
-async def inductive_miner(file: UploadFile = File(...)):
-    try:
+async def inductive_miner_tree(file: UploadFile = File(...)):
         log = await read_files(file)
         tree = pm4py.discover_process_tree_inductive(log)
         pm4py.view_process_tree(tree)
 
-        latest = latest_image()
-
-        return FileResponse(latest)
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
 
 async def directly_follow(file: UploadFile = File(...)):
-    try:
         log = await read_files(file)
 
         dfg, start_activities, end_activities = pm4py.discover_dfg(log)
         pm4py.view_dfg(dfg, start_activities, end_activities)
         precision = pm4py.algo.evaluation.precision.dfg.algorithm.apply(log, dfg, start_activities, end_activities)
 
-        latest = latest_image()
-
         results = {"precision": str(precision)}
-
-        return FileResponse(latest, headers=results)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return results
 
 
 
-async def directly_follow(file: UploadFile = File(...)):
-    try:
+async def dfg_to_petrinet(file: UploadFile = File(...)):
         log = await read_files(file)
 
         dfg, start_activities, end_activities = pm4py.discover_dfg(log)
@@ -285,51 +178,16 @@ async def directly_follow(file: UploadFile = File(...)):
         #     "Simplicity": simp
         # }
 
-        # return MiningResult(**result_data)
-        return FileResponse(latest_image())
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 
 
 
-async def dfg_perf(file: UploadFile = File(...)):
-    try:
+async def dfg_perfo(file: UploadFile = File(...)):
         log = await read_files(file)
         performance_dfg, start_activities, end_activities = pm4py.discover_performance_dfg(log)
         pm4py.view_performance_dfg(performance_dfg, start_activities, end_activities)
 
-        return FileResponse(latest_image())
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-# @router.post("/dfg_params/")
-# async def dfg_params(file: UploadFile = File(...)):
-#     try:
-#         file_content = await file.read()
-#         with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-#             temp_file.write(file_content)
-#             temp_file_path = temp_file.name
-#             if file.filename.endswith('.csv'):
-#                 log = await read_csv(file_content)
-#             else:
-#                 log = pm4py.read_xes(temp_file_path)
-#
-#             dfg, start_activities, end_activities = pm4py.discovery.discover_directly_follows_graph(log, noise_threshold=0.2)
-#
-#             # dfg = pm4py.discover_dfg(log, frequency_threshold= 0.1, noise_threshold=0.1)
-#
-#             pm4py.view_dfg(dfg,start_activities, end_activities)
-#
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
-
-
 
 async def bpmn_mod(file: UploadFile = File(...)):
-    try:
         file_content = await file.read()
         with tempfile.NamedTemporaryFile(delete=False) as temp_file:
             temp_file.write(file_content)
@@ -352,15 +210,9 @@ async def bpmn_mod(file: UploadFile = File(...)):
         #
         # print("BPMN model exported to:", bpmn_file_path)
 
-        return FileResponse(latest_image())
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
 
 
 async def process_animate(request: Request):
-    try:
         # with open("temp.xes", "wb") as temp_file:
         #     temp_file.write(await file.read())
 
@@ -382,6 +234,41 @@ async def process_animate(request: Request):
         # )
         # return templates.TemplateResponse(request=request,"animate_csv.html",{"file_path": latest_image})
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+
+async def read_csv(file_content):
+    dataframe = pd.read_csv(io.StringIO(file_content.decode('utf-8')), sep=';')
+
+    dataframe.rename(columns={'@timestamp': 'time:timestamp'}, inplace=True)
+    dataframe.rename(columns={'action': 'concept:name'}, inplace=True)
+    dataframe.rename(columns={'session_id': 'case:concept:name'}, inplace=True)
+    # Convert timestamp column to datetime format
+    dataframe['time:timestamp'] = pd.to_datetime(dataframe['time:timestamp'])
+    dataframe = pm4py.format_dataframe(dataframe, case_id='case:concept:name', activity_key='concept:name',
+                                       timestamp_key='time:timestamp')
+    log = pm4py.convert_to_event_log(dataframe)
+
+    return log
+
+
+async def read_files(file):
+    file_content = await file.read()
+    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+        temp_file.write(file_content)
+        temp_file_path = temp_file.name
+        if file.filename.endswith('.csv'):
+            log = await read_csv(file_content)
+        else:
+            log = pm4py.read_xes(temp_file_path)
+
+    os.remove(temp_file_path)
+
+    return log
+
+def latest_image():
+    tmp_dir = os.path.expanduser('/tmp')
+    list_of_files = glob.glob(os.path.join(tmp_dir, '*'))
+    latest_image = max(list_of_files, key=os.path.getctime)
+
+    return latest_image
+
 
