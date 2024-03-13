@@ -1,5 +1,7 @@
 import os
+import glob
 import pm4py
+import pandas as pd
 from fastapi import FastAPI, UploadFile, File, APIRouter, HTTPException, Query,Request,  Depends
 from pm4py.algo.discovery.alpha import algorithm as alpha_miner
 from pm4py.visualization.petri_net import visualizer as pn_visualizer
@@ -9,6 +11,7 @@ from pm4py.algo.evaluation.simplicity import algorithm as simplicity_evaluator
 from pm4py.objects.conversion.dfg.variants import to_petri_net_invisibles_no_duplicates
 import tempfile
 import subprocess
+from .models.qual_params import MiningResult
 
 async def alpha_miner_alg(file: UploadFile = File(...)):
         log = await read_files(file)
@@ -32,7 +35,7 @@ async def alpha_miner_quality(file: UploadFile = File(...)):
                    "Generalization": gen,
                    "Simplicity": simp}
 
-        return results
+        return MiningResult(**results)
 
 
 # able to discover more complex connection, handle loops and connections effectively
@@ -45,7 +48,7 @@ async def alpha_miner_plus(file: UploadFile = File(...)):
 
 
 
-async def alpha_miner_plus(file: UploadFile = File(...)):
+async def alpha_plus_quality(file: UploadFile = File(...)):
         log = await read_files(file)
         net, initial_marking, final_marking = alpha_miner.apply(log, variant=variants.plus)
         # Model evaluation
@@ -59,7 +62,7 @@ async def alpha_miner_plus(file: UploadFile = File(...)):
                    "Generalization": gen,
                    "Simplicity": simp}
 
-        return results
+        return MiningResult(**results)
 
 
 
@@ -133,6 +136,7 @@ async def inductive_miner(file: UploadFile = File(...),
             "Generalization": gen,
             "Simplicity": simp
         }
+        return MiningResult(**results)
 
 
 
