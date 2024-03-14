@@ -5,6 +5,8 @@ import pandas as pd
 import tempfile
 import pm4py
 from zipfile import ZipFile
+from pm4py.algo.evaluation.generalization import algorithm as generalization_evaluator
+from pm4py.algo.evaluation.simplicity import algorithm as simplicity_evaluator
 
 async def read_csv(file_content):
     dataframe = pd.read_csv(io.StringIO(file_content.decode('utf-8')), sep=';')
@@ -62,3 +64,21 @@ def generate_zip(diagram_path, pnml_path, qual_path):
     else:
         print("ZIP file not created")
 
+
+
+def calculate_quality(log, net, im,fm):
+
+    gen = generalization_evaluator.apply(log, net, im, fm)
+    fitness = pm4py.fitness_token_based_replay(log, net, im, fm)
+    prec = pm4py.precision_token_based_replay(log, net, im, fm)
+    simp = simplicity_evaluator.apply(net)
+
+    results = {"Fitness": fitness,
+               "Precision": prec,
+               "Generalization": gen,
+               "Simplicity": simp}
+
+    with open("outputs/quality.json", "w") as outfile:
+        json.dump(results, outfile)
+
+    return results

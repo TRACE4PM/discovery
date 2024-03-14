@@ -14,7 +14,7 @@ from pm4py.objects.conversion.dfg.variants import to_petri_net_invisibles_no_dup
 import tempfile
 import subprocess
 from .models.qual_params import MiningResult
-from .utils import read_files, latest_image, generate_zip
+from .utils import read_files, latest_image, generate_zip, calculate_quality
 import json
 
 async def alpha_miner_alg(file):
@@ -29,66 +29,32 @@ async def alpha_miner_quality(file):
         log = await read_files(file)
         net, initial_marking, final_marking = alpha_miner.apply(log)
 
-        gviz = pn_visualizer.apply(net, initial_marking, final_marking)
-        diagram_visual.save(gviz, "outputs/diagram.png")
-        # Model evaluation :
-        gen = generalization_evaluator.apply(log, net, initial_marking, final_marking)
-        fitness = pm4py.fitness_token_based_replay(log, net, initial_marking, final_marking)
-        prec = pm4py.precision_token_based_replay(log, net, initial_marking, final_marking)
-        simp = simplicity_evaluator.apply(net)
-
-        results = {"Fitness": fitness,
-                   "Precision": prec,
-                   "Generalization": gen,
-                   "Simplicity": simp}
-
-        with open("outputs/quality.json", "w") as outfile:
-            json.dump(results, outfile)
-
-        pm4py.write.write_pnml(net, initial_marking, final_marking,
-                               "/home/ania/Desktop/trace_clustering/services/discover/outputs/pnml_file")
-
-        generate_zip("outputs/diagram",  "outputs/pnml_file.pnml", "outputs/quality.json")
-
-        return MiningResult(**results)
+        return log, net, initial_marking, final_marking
 
 
 # able to discover more complex connection, handle loops and connections effectively
-
 async def alpha_miner_plus(file):
         log = await read_files(file)
         net, initial_marking, final_marking = alpha_miner.apply(log, variant=variants.plus)
         gviz = pn_visualizer.apply(net, initial_marking, final_marking)
-        pn_visualizer.view(gviz)
-
+        return gviz
 
 
 async def alpha_plus_quality(file):
         log = await read_files(file)
         net, initial_marking, final_marking = alpha_miner.apply(log, variant=variants.plus)
-        gviz = pn_visualizer.apply(net, initial_marking, final_marking)
-        diagram_visual.save(gviz, "outputs/diagram.png")
+        # gviz = pn_visualizer.apply(net, initial_marking, final_marking)
+        # diagram_visual.save(gviz, "outputs/diagram.png")
 
         # Model evaluation
-        gen = generalization_evaluator.apply(log, net, initial_marking, final_marking)
-        fitness = pm4py.fitness_token_based_replay(log, net, initial_marking, final_marking)
-        prec = pm4py.precision_token_based_replay(log, net, initial_marking, final_marking)
-        simp = simplicity_evaluator.apply(net)
+        # results = calculate_quality(log, net, initial_marking, final_marking)
+        #
+        # pm4py.write.write_pnml(net, initial_marking, final_marking,
+        #                        "/home/ania/Desktop/trace_clustering/services/discover/outputs/pnml_file")
+        #
+        # generate_zip("outputs/diagram", "outputs/pnml_file.pnml", "outputs/quality.json")
 
-        results = {"Fitness": fitness,
-                   "Precision": prec,
-                   "Generalization": gen,
-                   "Simplicity": simp}
-
-        with open("outputs/quality.json", "w") as outfile:
-            json.dump(results, outfile)
-
-        pm4py.write.write_pnml(net, initial_marking, final_marking,
-                               "/home/ania/Desktop/trace_clustering/services/discover/outputs/pnml_file")
-
-        generate_zip("outputs/diagram", "outputs/pnml_file.pnml", "outputs/quality.json")
-
-        return MiningResult(**results)
+        return log, net, initial_marking, final_marking
 
 
 
@@ -102,20 +68,22 @@ async def freq_alpha_miner(file):
                                    parameters=parameters,
                                    variant=pn_visualizer.Variants.FREQUENCY,
                                    log=log)
-        pn_visualizer.view(gviz)
+        return gviz
 
 
 async def heuristic_miner(file):
         log = await read_files(file)
         heu_net = pm4py.discover_heuristics_net(log, activity_key='concept:name', case_id_key='case:concept:name',
                                                 timestamp_key='time:timestamp')
-        pm4py.view_heuristics_net(heu_net)
+        # pm4py.view_heuristics_net(heu_net)
+        return heu_net
 
 
 async def heuristic_miner_petri(file):
         log = await read_files(file)
         net, im, fm = pm4py.discover_petri_net_heuristics(log)
-        pm4py.view_petri_net(net, im, fm)
+        # pm4py.view_petri_net(net, im, fm)
+        return net, im, fm
 
 
 async def heuristic_params_threshold(file,
@@ -130,8 +98,8 @@ async def heuristic_params_threshold(file,
         # 2) and_threshold    def: 0.65   (activities that occur in the same time )
         # 3) loop_two_threshold    def : 0.5   (minimum frequency required for a loop to be considered significant )
 
-        pm4py.view_heuristics_net(heu_net)
-
+        # pm4py.view_heuristics_net(heu_net)
+        return heu_net
 
 async def inductive_miner(file,
                           noise_threshold: float = Query(0, ge=0, le=1)):
@@ -139,7 +107,8 @@ async def inductive_miner(file,
 
         # noise threshold: filters noisy behavior, activities that are infrequent and outliers
         net, initial_marking, final_marking = pm4py.discover_petri_net_inductive(log, noise_threshold)
-        pn_visualizer.apply(net, initial_marking, final_marking).view()
+        gviz = pn_visualizer.apply(net, initial_marking, final_marking)
+        return gviz
 
 
 async def inductive_miner_quality(file,
@@ -181,18 +150,19 @@ async def inductive_miner_quality(file,
 async def inductive_miner_tree(file):
         log = await read_files(file)
         tree = pm4py.discover_process_tree_inductive(log)
-        pm4py.view_process_tree(tree)
+        # pm4py.view_process_tree(tree)
+        return tree
 
 
 async def directly_follow(file):
         log = await read_files(file)
 
         dfg, start_activities, end_activities = pm4py.discover_dfg(log)
-        pm4py.view_dfg(dfg, start_activities, end_activities)
-        precision = pm4py.algo.evaluation.precision.dfg.algorithm.apply(log, dfg, start_activities, end_activities)
+        # pm4py.view_dfg(dfg, start_activities, end_activities)
+        # precision = pm4py.algo.evaluation.precision.dfg.algorithm.apply(log, dfg, start_activities, end_activities)
 
-        results = {"precision": str(precision)}
-        return results
+        # results = {"precision": str(precision)}
+        return dfg, start_activities, end_activities
 
 
 
@@ -236,7 +206,8 @@ async def dfg_to_petrinet(file):
 async def dfg_perfor(file):
         log = await read_files(file)
         performance_dfg, start_activities, end_activities = pm4py.discover_performance_dfg(log)
-        pm4py.view_performance_dfg(performance_dfg, start_activities, end_activities)
+        # pm4py.view_performance_dfg(performance_dfg, start_activities, end_activities)
+        return performance_dfg, start_activities, end_activities
 
 
 async def bpmn_model(file):
