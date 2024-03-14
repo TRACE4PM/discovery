@@ -1,0 +1,418 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pnml>
+  <net id="" type="http://www.pnml.org/version-2009/grammar/pnmlcoremodel">
+    <name>
+      <text></text>
+    </name>
+    <page id="n0">
+      <place id="sink_home_topics">
+        <name>
+          <text>sink_home_topics</text>
+        </name>
+      </place>
+      <place id="source_catalog_index_query">
+        <name>
+          <text>source_catalog_index_query</text>
+        </name>
+      </place>
+      <place id="source_home_periods_selection">
+        <name>
+          <text>source_home_periods_selection</text>
+        </name>
+      </place>
+      <place id="sink_home_index">
+        <name>
+          <text>sink_home_index</text>
+        </name>
+      </place>
+      <place id="source_home_periods">
+        <name>
+          <text>source_home_periods</text>
+        </name>
+      </place>
+      <place id="sink_home_periods">
+        <name>
+          <text>sink_home_periods</text>
+        </name>
+      </place>
+      <place id="sink_▶">
+        <name>
+          <text>sink_▶</text>
+        </name>
+      </place>
+      <place id="source_home_index">
+        <name>
+          <text>source_home_index</text>
+        </name>
+      </place>
+      <place id="source_▶">
+        <name>
+          <text>source_▶</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="source_home_languages">
+        <name>
+          <text>source_home_languages</text>
+        </name>
+      </place>
+      <place id="sink_home_languages">
+        <name>
+          <text>sink_home_languages</text>
+        </name>
+      </place>
+      <place id="sink_home_show_topic_selection">
+        <name>
+          <text>sink_home_show_topic_selection</text>
+        </name>
+      </place>
+      <place id="sink_catalog_show">
+        <name>
+          <text>sink_catalog_show</text>
+        </name>
+      </place>
+      <place id="source_home_show_topic_selection">
+        <name>
+          <text>source_home_show_topic_selection</text>
+        </name>
+      </place>
+      <place id="sink_■">
+        <name>
+          <text>sink_■</text>
+        </name>
+      </place>
+      <place id="source_home_topics">
+        <name>
+          <text>source_home_topics</text>
+        </name>
+      </place>
+      <place id="source_catalog_index_filter">
+        <name>
+          <text>source_catalog_index_filter</text>
+        </name>
+      </place>
+      <place id="sink_catalog_index_filter">
+        <name>
+          <text>sink_catalog_index_filter</text>
+        </name>
+      </place>
+      <place id="sink_catalog_index_query">
+        <name>
+          <text>sink_catalog_index_query</text>
+        </name>
+      </place>
+      <place id="sink_home_periods_selection">
+        <name>
+          <text>sink_home_periods_selection</text>
+        </name>
+      </place>
+      <place id="source_home_languages_selection">
+        <name>
+          <text>source_home_languages_selection</text>
+        </name>
+      </place>
+      <place id="sink_home_languages_selection">
+        <name>
+          <text>sink_home_languages_selection</text>
+        </name>
+      </place>
+      <place id="source_catalog_show">
+        <name>
+          <text>source_catalog_show</text>
+        </name>
+      </place>
+      <place id="source_■">
+        <name>
+          <text>source_■</text>
+        </name>
+      </place>
+      <transition id="home_languages_selection_catalog_show">
+        <name>
+          <text>home_languages_selection_catalog_show</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="b3137e55-7c7f-43e2-a640-76a5fb3d03bf"/>
+      </transition>
+      <transition id="home_periods_home_periods_selection">
+        <name>
+          <text>home_periods_home_periods_selection</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="1c62b9b8-3326-44f8-b1e9-80d213f0d94f"/>
+      </transition>
+      <transition id="trans_home_index">
+        <name>
+          <text>home_index</text>
+        </name>
+      </transition>
+      <transition id="home_index_catalog_index_query">
+        <name>
+          <text>home_index_catalog_index_query</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="64fdef6c-6b71-49eb-ab49-51d5ee3000ee"/>
+      </transition>
+      <transition id="trans_catalog_index_query">
+        <name>
+          <text>catalog_index_query</text>
+        </name>
+      </transition>
+      <transition id="trans_home_periods_selection">
+        <name>
+          <text>home_periods_selection</text>
+        </name>
+      </transition>
+      <transition id="trans_home_languages_selection">
+        <name>
+          <text>home_languages_selection</text>
+        </name>
+      </transition>
+      <transition id="trans_▶">
+        <name>
+          <text>trans_▶</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="50c98e83-4b85-41a8-a153-c90769cea845"/>
+      </transition>
+      <transition id="home_periods_catalog_show">
+        <name>
+          <text>home_periods_catalog_show</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="c2b449d3-f9b8-4784-af24-0a48ab059ecf"/>
+      </transition>
+      <transition id="home_languages_home_languages_selection">
+        <name>
+          <text>home_languages_home_languages_selection</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="b94b8d39-0077-41b3-bf5c-1b117c8b3948"/>
+      </transition>
+      <transition id="catalog_index_query_catalog_index_filter">
+        <name>
+          <text>catalog_index_query_catalog_index_filter</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="c1de6ec9-5a7d-4e85-b3fc-30659bdfe765"/>
+      </transition>
+      <transition id="home_show_topic_selection_home_show_topic_selection">
+        <name>
+          <text>home_show_topic_selection_home_show_topic_selection</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="594bd57b-efdc-4878-85c7-a94e22cf3b65"/>
+      </transition>
+      <transition id="catalog_index_filter_catalog_show">
+        <name>
+          <text>catalog_index_filter_catalog_show</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="05a6cab1-ba11-4194-9ccf-a36c582232ef"/>
+      </transition>
+      <transition id="catalog_show_home_show_topic_selection">
+        <name>
+          <text>catalog_show_home_show_topic_selection</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="1f81b03e-366f-4f8a-9731-1587b0814b50"/>
+      </transition>
+      <transition id="▶_home_index">
+        <name>
+          <text>▶_home_index</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="c578346b-42b1-42c3-8a0f-b662b9e27d8d"/>
+      </transition>
+      <transition id="home_index_home_topics">
+        <name>
+          <text>home_index_home_topics</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="0db25898-c779-4aff-9931-f97b8c9a0184"/>
+      </transition>
+      <transition id="home_show_topic_selection_catalog_index_query">
+        <name>
+          <text>home_show_topic_selection_catalog_index_query</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="de19c6c0-543c-4022-a4b0-06943d559da0"/>
+      </transition>
+      <transition id="trans_home_periods">
+        <name>
+          <text>home_periods</text>
+        </name>
+      </transition>
+      <transition id="catalog_show_home_periods">
+        <name>
+          <text>catalog_show_home_periods</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="503b76c1-19ac-4e23-a3f2-77819afd8448"/>
+      </transition>
+      <transition id="catalog_show_catalog_show">
+        <name>
+          <text>catalog_show_catalog_show</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="4120c504-ba22-4d89-a068-629b41aa99d9"/>
+      </transition>
+      <transition id="home_index_home_periods">
+        <name>
+          <text>home_index_home_periods</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="37ae975f-a16d-4fbb-84a3-e82a15a622e7"/>
+      </transition>
+      <transition id="catalog_show_catalog_index_query">
+        <name>
+          <text>catalog_show_catalog_index_query</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="5f9c4c99-211f-40eb-ba10-3cc4a282337c"/>
+      </transition>
+      <transition id="home_topics_home_show_topic_selection">
+        <name>
+          <text>home_topics_home_show_topic_selection</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="0d8fe048-9ddd-4000-acb6-53f0de13836e"/>
+      </transition>
+      <transition id="home_show_topic_selection_catalog_show">
+        <name>
+          <text>home_show_topic_selection_catalog_show</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="e61d7917-495f-48dc-9a35-132ab7c94841"/>
+      </transition>
+      <transition id="catalog_show_catalog_index_filter">
+        <name>
+          <text>catalog_show_catalog_index_filter</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="41f8e781-ac06-4e2d-9120-b43e59e319c9"/>
+      </transition>
+      <transition id="trans_home_languages">
+        <name>
+          <text>home_languages</text>
+        </name>
+      </transition>
+      <transition id="trans_home_show_topic_selection">
+        <name>
+          <text>home_show_topic_selection</text>
+        </name>
+      </transition>
+      <transition id="trans_catalog_index_filter">
+        <name>
+          <text>catalog_index_filter</text>
+        </name>
+      </transition>
+      <transition id="trans_catalog_show">
+        <name>
+          <text>catalog_show</text>
+        </name>
+      </transition>
+      <transition id="trans_■">
+        <name>
+          <text>trans_■</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="edee46b9-2f78-4e23-acd0-baee68b93a52"/>
+      </transition>
+      <transition id="trans_home_topics">
+        <name>
+          <text>home_topics</text>
+        </name>
+      </transition>
+      <transition id="catalog_index_query_catalog_show">
+        <name>
+          <text>catalog_index_query_catalog_show</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="595e85d6-1dfb-405e-bad5-d6bc46b72a9d"/>
+      </transition>
+      <transition id="home_periods_selection_catalog_show">
+        <name>
+          <text>home_periods_selection_catalog_show</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="a6cf03fa-34ef-44cf-b386-6a03db9d0de1"/>
+      </transition>
+      <transition id="catalog_show_home_topics">
+        <name>
+          <text>catalog_show_home_topics</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="aa819404-e34e-4e64-a71d-65b7cfc3268b"/>
+      </transition>
+      <transition id="home_index_home_languages">
+        <name>
+          <text>home_index_home_languages</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="f3596f30-c715-40ce-922d-d82f6102ba7f"/>
+      </transition>
+      <transition id="catalog_show_■">
+        <name>
+          <text>catalog_show_■</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="6cd2eac5-fbf5-409a-9ed6-3b66b5374b59"/>
+      </transition>
+      <arc id="140640101168656" source="sink_catalog_show" target="catalog_show_home_periods"/>
+      <arc id="140640101168784" source="catalog_show_home_periods" target="source_home_periods"/>
+      <arc id="140640101162704" source="sink_catalog_show" target="catalog_show_catalog_index_query"/>
+      <arc id="140640101162832" source="catalog_show_catalog_index_query" target="source_catalog_index_query"/>
+      <arc id="140640103486480" source="source_catalog_index_query" target="trans_catalog_index_query"/>
+      <arc id="140640101153680" source="source_home_languages_selection" target="trans_home_languages_selection"/>
+      <arc id="140640101154192" source="source_home_periods_selection" target="trans_home_periods_selection"/>
+      <arc id="140640103373328" source="trans_home_languages_selection" target="sink_home_languages_selection"/>
+      <arc id="140640101158992" source="source_home_topics" target="trans_home_topics"/>
+      <arc id="140640101159696" source="source_home_index" target="trans_home_index"/>
+      <arc id="140640101159824" source="trans_home_index" target="sink_home_index"/>
+      <arc id="140640101159120" source="trans_home_topics" target="sink_home_topics"/>
+      <arc id="140640101163088" source="sink_catalog_show" target="catalog_show_catalog_index_filter"/>
+      <arc id="140640101163216" source="catalog_show_catalog_index_filter" target="source_catalog_index_filter"/>
+      <arc id="140640101165072" source="sink_home_index" target="home_index_home_periods"/>
+      <arc id="140640101165200" source="home_index_home_periods" target="source_home_periods"/>
+      <arc id="140640101167312" source="sink_catalog_index_query" target="catalog_index_query_catalog_index_filter"/>
+      <arc id="140640101167440" source="catalog_index_query_catalog_index_filter" target="source_catalog_index_filter"/>
+      <arc id="140640101169552" source="sink_home_periods_selection" target="home_periods_selection_catalog_show"/>
+      <arc id="140640101163472" source="sink_catalog_index_filter" target="catalog_index_filter_catalog_show"/>
+      <arc id="140640101169680" source="home_periods_selection_catalog_show" target="source_catalog_show"/>
+      <arc id="140640101163600" source="catalog_index_filter_catalog_show" target="source_catalog_show"/>
+      <arc id="140640101162448" source="home_show_topic_selection_catalog_show" target="source_catalog_show"/>
+      <arc id="140640101163856" source="sink_home_index" target="home_index_home_topics"/>
+      <arc id="140640101165968" source="sink_home_index" target="home_index_home_languages"/>
+      <arc id="140640101155792" source="source_home_languages" target="trans_home_languages"/>
+      <arc id="140640101163984" source="home_index_home_topics" target="source_home_topics"/>
+      <arc id="140640101166096" source="home_index_home_languages" target="source_home_languages"/>
+      <arc id="140640101155920" source="trans_home_languages" target="sink_home_languages"/>
+      <arc id="140640101168208" source="sink_home_show_topic_selection" target="home_show_topic_selection_home_show_topic_selection"/>
+      <arc id="140640101164240" source="sink_home_show_topic_selection" target="home_show_topic_selection_catalog_index_query"/>
+      <arc id="140640101168336" source="home_show_topic_selection_home_show_topic_selection" target="source_home_show_topic_selection"/>
+      <arc id="140640101170448" source="sink_catalog_show" target="catalog_show_■"/>
+      <arc id="140640101164368" source="home_show_topic_selection_catalog_index_query" target="source_catalog_index_query"/>
+      <arc id="140640101170576" source="catalog_show_■" target="source_■"/>
+      <arc id="140640101160400" source="source_home_periods" target="trans_home_periods"/>
+      <arc id="140640101160528" source="trans_home_periods" target="sink_home_periods"/>
+      <arc id="140640101164624" source="sink_catalog_show" target="catalog_show_catalog_show"/>
+      <arc id="140640101166416" source="sink_home_languages" target="home_languages_home_languages_selection"/>
+      <arc id="140640101164752" source="catalog_show_catalog_show" target="source_catalog_show"/>
+      <arc id="140640101166864" source="sink_home_languages_selection" target="home_languages_selection_catalog_show"/>
+      <arc id="140640101160784" source="sink_home_index" target="home_index_catalog_index_query"/>
+      <arc id="140640101166992" source="home_languages_selection_catalog_show" target="source_catalog_show"/>
+      <arc id="140640101160912" source="home_index_catalog_index_query" target="source_catalog_index_query"/>
+      <arc id="140640101156432" source="source_home_show_topic_selection" target="trans_home_show_topic_selection"/>
+      <arc id="140640101158480" source="trans_■" target="sink_■"/>
+      <arc id="140640101157072" source="source_catalog_index_filter" target="trans_catalog_index_filter"/>
+      <arc id="140640101156560" source="trans_home_show_topic_selection" target="sink_home_show_topic_selection"/>
+      <arc id="140640101157712" source="source_catalog_show" target="trans_catalog_show"/>
+      <arc id="140640101157840" source="trans_catalog_show" target="sink_catalog_show"/>
+      <arc id="140640103487056" source="trans_catalog_index_query" target="sink_catalog_index_query"/>
+      <arc id="140640101153616" source="trans_home_periods_selection" target="sink_home_periods_selection"/>
+      <arc id="140640101155152" source="source_▶" target="trans_▶"/>
+      <arc id="140640101155280" source="trans_▶" target="sink_▶"/>
+      <arc id="140640101161168" source="sink_catalog_index_query" target="catalog_index_query_catalog_show"/>
+      <arc id="140640101157200" source="trans_catalog_index_filter" target="sink_catalog_index_filter"/>
+      <arc id="140640101161296" source="catalog_index_query_catalog_show" target="source_catalog_show"/>
+      <arc id="140640101166544" source="home_languages_home_languages_selection" target="source_home_languages_selection"/>
+      <arc id="140640101165520" source="sink_home_periods" target="home_periods_catalog_show"/>
+      <arc id="140640101161552" source="sink_catalog_show" target="catalog_show_home_topics"/>
+      <arc id="140640101165648" source="home_periods_catalog_show" target="source_catalog_show"/>
+      <arc id="140640101167760" source="sink_catalog_show" target="catalog_show_home_show_topic_selection"/>
+      <arc id="140640101161680" source="catalog_show_home_topics" target="source_home_topics"/>
+      <arc id="140640101167888" source="catalog_show_home_show_topic_selection" target="source_home_show_topic_selection"/>
+      <arc id="140640101169104" source="sink_home_periods" target="home_periods_home_periods_selection"/>
+      <arc id="140640101170000" source="sink_▶" target="▶_home_index"/>
+      <arc id="140640101161936" source="sink_home_topics" target="home_topics_home_show_topic_selection"/>
+      <arc id="140640101170128" source="▶_home_index" target="source_home_index"/>
+      <arc id="140640101162064" source="home_topics_home_show_topic_selection" target="source_home_show_topic_selection"/>
+      <arc id="140640101162320" source="sink_home_show_topic_selection" target="home_show_topic_selection_catalog_show"/>
+      <arc id="140640101169232" source="home_periods_home_periods_selection" target="source_home_periods_selection"/>
+      <arc id="140640101158352" source="source_■" target="trans_■"/>
+    </page>
+    <finalmarkings>
+      <marking>
+        <place idref="sink_■">
+          <text>1</text>
+        </place>
+      </marking>
+    </finalmarkings>
+  </net>
+</pnml>
