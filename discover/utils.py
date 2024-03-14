@@ -4,9 +4,8 @@ import glob
 import pandas as pd
 import tempfile
 import pm4py
-from zipfile import ZipFile
-from pm4py.algo.evaluation.generalization import algorithm as generalization_evaluator
-from pm4py.algo.evaluation.simplicity import algorithm as simplicity_evaluator
+import json
+
 
 async def read_csv(file_content):
     dataframe = pd.read_csv(io.StringIO(file_content.decode('utf-8')), sep=';')
@@ -41,6 +40,7 @@ async def read_files(file):
     os.remove(temp_file_path)
     return log
 
+
 def latest_image():
     tmp_dir = os.path.expanduser('/tmp')
     list_of_files = glob.glob(os.path.join(tmp_dir, '*'))
@@ -48,8 +48,9 @@ def latest_image():
 
     return latest_image
 
+
 def generate_zip(diagram_path, pnml_path, qual_path):
-    zip_path = "/home/ania/Desktop/trace_clustering/services/discover/outputs/Zipped_file.zip"
+    zip_path = "src/outputs/Zipped_file.zip"
     with ZipFile(zip_path, 'w') as zip_object:
         # Adding files that need to be zipped
         zip_object.write(pnml_path,
@@ -57,17 +58,14 @@ def generate_zip(diagram_path, pnml_path, qual_path):
         zip_object.write(diagram_path, arcname="gviz_diagram")
         zip_object.write(qual_path, arcname="algo_quality")
 
-
     # Check to see if the zip file is created
     if os.path.exists(zip_path):
-        print("ZIP file created")
+        return "ZIP file created :", zip_path
     else:
-        print("ZIP file not created")
+        return "ZIP file not created"
 
 
-
-def calculate_quality(log, net, im,fm):
-
+def calculate_quality(log, net, im, fm):
     gen = generalization_evaluator.apply(log, net, im, fm)
     fitness = pm4py.fitness_token_based_replay(log, net, im, fm)
     prec = pm4py.precision_token_based_replay(log, net, im, fm)
@@ -78,7 +76,8 @@ def calculate_quality(log, net, im,fm):
                "Generalization": gen,
                "Simplicity": simp}
 
-    with open("outputs/quality.json", "w") as outfile:
+    json_path = "src/outputs/quality.json"
+    with open(json_path, "w") as outfile:
         json.dump(results, outfile)
 
-    return results
+    return json_path
