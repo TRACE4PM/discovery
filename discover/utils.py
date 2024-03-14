@@ -27,18 +27,16 @@ async def read_csv(file_content):
 
 
 async def read_files(file):
-    with open(file, 'rb') as f:
-        file_content = f.read()
+    file_content = await file.read()
     with tempfile.NamedTemporaryFile(delete=False) as temp_file:
         temp_file.write(file_content)
         temp_file_path = temp_file.name
-        if file.endswith('.csv'):
+        if file.filename.endswith('.csv'):
             log = await read_csv(file_content)
         else:
             log = pm4py.read_xes(temp_file_path)
 
     os.remove(temp_file_path)
-
     return log
 
 def latest_image():

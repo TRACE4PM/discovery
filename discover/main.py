@@ -21,8 +21,7 @@ async def alpha_miner_alg(file):
         log = await read_files(file)
         net, initial_marking, final_marking = alpha_miner.apply(log)
         gviz = pn_visualizer.apply(net, initial_marking, final_marking)
-        pn_visualizer.view(gviz)
-
+        return gviz
 
 
 
