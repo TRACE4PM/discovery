@@ -18,22 +18,22 @@ from .utils import read_files, latest_image, generate_zip, calculate_quality
 import json
 
 
-async def alpha_miner_alg(file):
-    log = await read_files(file)
+async def alpha_miner_alg(file, sep):
+    log = await read_files(file, sep)
     net, initial_marking, final_marking = alpha_miner.apply(log)
 
     return log, net, initial_marking, final_marking
 
 
 # able to discover more complex connection, handle loops and connections effectively
-async def alpha_miner_plus(file):
-    log = await read_files(file)
+async def alpha_miner_plus(file,sep):
+    log = await read_files(file, sep)
     net, initial_marking, final_marking = alpha_miner.apply(log, variant=variants.plus)
     return log, net, initial_marking, final_marking
 
 
-async def freq_alpha_miner(file):
-    log = await read_files(file)
+async def freq_alpha_miner(file, sep):
+    log = await read_files(file, sep)
 
     net, initial_marking, final_marking = alpha_miner.apply(log)
     parameters = {pn_visualizer.Variants.FREQUENCY.value.Parameters.FORMAT: "png"}
@@ -44,24 +44,24 @@ async def freq_alpha_miner(file):
     return gviz
 
 
-async def heuristic_miner(file):
-    log = await read_files(file)
+async def heuristic_miner(file, sep):
+    log = await read_files(file, sep)
     heu_net = pm4py.discover_heuristics_net(log, activity_key='concept:name', case_id_key='case:concept:name',
                                             timestamp_key='time:timestamp')
     # pm4py.view_heuristics_net(heu_net)
     return heu_net
 
 
-async def heuristic_miner_petri(file):
-    log = await read_files(file)
+async def heuristic_miner_petri(file, sep):
+    log = await read_files(file, sep)
     net, im, fm = pm4py.discover_petri_net_heuristics(log)
     # pm4py.view_petri_net(net, im, fm)
     return net, im, fm
 
 
-async def heuristic_params_threshold(file,
+async def heuristic_params_threshold(file, sep,
                                      value):
-    log = await read_files(file)
+    log = await read_files(file, sep)
 
     heu_net = pm4py.discover_heuristics_net(log, activity_key='concept:name', case_id_key='case:concept:name',
                                             timestamp_key='time:timestamp', dependency_threshold=value)
@@ -75,8 +75,8 @@ async def heuristic_params_threshold(file,
     return heu_net
 
 
-async def inductive_miner(file, noise_threshold):
-    log = await read_files(file)
+async def inductive_miner(file, sep, noise_threshold):
+    log = await read_files(file, sep)
     # noise threshold: filters noisy behavior, activities that are infrequent and outliers
     net, initial_marking, final_marking = pm4py.discover_petri_net_inductive(log, noise_threshold)
 
@@ -102,15 +102,15 @@ async def inductive_miner(file, noise_threshold):
 #         return zip
 #
 
-async def inductive_miner_tree(file):
-    log = await read_files(file)
+async def inductive_miner_tree(file, sep):
+    log = await read_files(file, sep)
     tree = pm4py.discover_process_tree_inductive(log)
     # pm4py.view_process_tree(tree)
     return tree
 
 
-async def directly_follow(file):
-    log = await read_files(file)
+async def directly_follow(file, sep):
+    log = await read_files(file, sep)
 
     dfg, start_activities, end_activities = pm4py.discover_dfg(log)
     # pm4py.view_dfg(dfg, start_activities, end_activities)
@@ -120,8 +120,8 @@ async def directly_follow(file):
     return dfg, start_activities, end_activities
 
 
-async def dfg_to_petrinet(file):
-    log = await read_files(file)
+async def dfg_to_petrinet(file, sep):
+    log = await read_files(file, sep)
 
     dfg, start_activities, end_activities = pm4py.discover_dfg(log)
     # pm4py.view_dfg(dfg, start_activities, end_activities)
@@ -135,15 +135,15 @@ async def dfg_to_petrinet(file):
     return net, initial_marking, final_marking
 
 
-async def dfg_perfor(file):
-    log = await read_files(file)
+async def dfg_perfor(file, sep):
+    log = await read_files(file, sep)
     performance_dfg, start_activities, end_activities = pm4py.discover_performance_dfg(log)
     # pm4py.view_performance_dfg(performance_dfg, start_activities, end_activities)
     return performance_dfg, start_activities, end_activities
 
 
-async def bpmn_model(file):
-    log = await read_files(file)
+async def bpmn_model(file, sep):
+    log = await read_files(file, sep)
     process_tree = pm4py.discover_process_tree_inductive(log)
     # Convert the process tree to a BPMN model
     bpmn_model = pm4py.convert_to_bpmn(process_tree)
