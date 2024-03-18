@@ -112,7 +112,9 @@ async def inductive_miner_tree(file, sep):
 async def directly_follow(file, sep):
     log = await read_files(file, sep)
 
-    dfg, start_activities, end_activities = pm4py.discover_dfg(log)
+    dfg, start_activities, end_activities = pm4py.discover_dfg(log, case_id_key='case:concept:name',
+                                                               activity_key='concept:name',
+                                                               timestamp_key='time:timestamp')
     # pm4py.view_dfg(dfg, start_activities, end_activities)
     # precision = pm4py.algo.evaluation.precision.dfg.algorithm.apply(log, dfg, start_activities, end_activities)
 
@@ -132,7 +134,7 @@ async def dfg_to_petrinet(file, sep):
     net, initial_marking, final_marking = to_petri_net_invisibles_no_duplicates.apply(dfg, parameters=parameters)
     # gviz = pn_visualizer.apply(net, initial_marking, final_marking)
 
-    return net, initial_marking, final_marking
+    return log, net, initial_marking, final_marking
 
 
 async def dfg_perfor(file, sep):
@@ -159,14 +161,14 @@ async def bpmn_model(file, sep):
     return bpmn_model
 
 
-async def process_animate(request: Request):
+async def process_animate(file_path):
     # Save the uploaded file
-    file_path = os.path.join("src/logs", file.filename)
-    with open(file_path, "wb") as f:
-        contents = await file.read()
-        f.write(contents)
+    # file_path = os.path.join("src/logs", file.filename)
+    # with open(file_path, "wb") as f:
+    #     contents = await file.read()
+    #     f.write(contents)
 
     # Call the R function with the file path
     r_script_path = os.path.join(os.path.dirname(__file__), "file.R")
     res = subprocess.call(["Rscript", r_script_path, file_path])
-    res
+    return res

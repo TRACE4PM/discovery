@@ -9,7 +9,7 @@ from discover.utils import read_files
 async def alph():
     # file = '/home/ania/Desktop/trace_clustering/services/discover/test/running-example.xes'
     file = '/home/ania/Desktop/trace_clustering/services/discover/test/Digital-Library-logs.csv'
-    result = await alpha_miner_alg(file)
+    result = await alpha_miner_alg(file,";")
     print(result)
 
 async def main():
