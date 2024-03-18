@@ -7,18 +7,16 @@ import pm4py
 import json
 
 
-async def read_csv(file_content):
-    dataframe = pd.read_csv(io.StringIO(file_content.decode('utf-8')), sep=';')
+async def read_csv(file_content, sep):
+    dataframe = pd.read_csv(io.StringIO(file_content.decode('utf-8')), sep=sep)
 
-    dataframe.rename(columns={'@timestamp': 'time:timestamp'}, inplace=True)
+    #renaming the col ending with _id
+    dataframe.rename(columns=lambda x: 'case:concept:name' if x.endswith('_id') else x, inplace=True)
+    dataframe.rename(columns=lambda x: 'time:timestamp' if x.endswith('timestamp') else x, inplace=True)
     dataframe.rename(columns={'action': 'concept:name'}, inplace=True)
-    dataframe.rename(columns={'session_id': 'case:concept:name'}, inplace=True)
 
-    # Specify the timestamp format
-    timestamp_format = "%Y-%m-%d %H:%M:%S.%f"
-
-    # Convert timestamp column to datetime format with specified format
-    dataframe['time:timestamp'] = pd.to_datetime(dataframe['time:timestamp'], format=timestamp_format)
+    # Convert timestamp column to datetime and handle mixed format
+    dataframe['time:timestamp'] = pd.to_datetime(dataframe['time:timestamp'], format='mixed')
 
     dataframe = pm4py.format_dataframe(dataframe, case_id='case:concept:name', activity_key='concept:name',
                                        timestamp_key='time:timestamp')
@@ -27,14 +25,14 @@ async def read_csv(file_content):
     return log
 
 
-async def read_files(file):
+async def read_files(file, sep):
     file_content = await file.read()
     with tempfile.NamedTemporaryFile(delete=False) as temp_file:
         temp_file.write(file_content)
         temp_file_path = temp_file.name
         if file.filename.endswith('.csv'):
-            log = await read_csv(file_content)
-        else:
+            log = await read_csv(file_content,sep)
+        elif file.filename.endswith('.xes'):
             log = pm4py.read_xes(temp_file_path)
 
     os.remove(temp_file_path)

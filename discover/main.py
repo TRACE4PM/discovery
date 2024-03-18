@@ -130,9 +130,9 @@ async def dfg_to_petrinet(file):
                   to_petri_net_invisibles_no_duplicates.Parameters.END_ACTIVITIES: end_activities}
 
     net, initial_marking, final_marking = to_petri_net_invisibles_no_duplicates.apply(dfg, parameters=parameters)
-    gviz = pn_visualizer.apply(net, initial_marking, final_marking)
-    # diagram_visual.save(gviz, "outputs/diagram.png")
-    return gviz
+    # gviz = pn_visualizer.apply(net, initial_marking, final_marking)
+
+    return net, initial_marking, final_marking
 
 
 async def dfg_perfor(file):
@@ -160,23 +160,13 @@ async def bpmn_model(file):
 
 
 async def process_animate(request: Request):
-    # with open("temp.xes", "wb") as temp_file:
-    #     temp_file.write(await file.read())
+    # Save the uploaded file
+    file_path = os.path.join("src/logs", file.filename)
+    with open(file_path, "wb") as f:
+        contents = await file.read()
+        f.write(contents)
 
+    # Call the R function with the file path
     r_script_path = os.path.join(os.path.dirname(__file__), "file.R")
-    res = subprocess.call(["Rscript", r_script_path])
-
-    if res != 0:
-        raise HTTPException(status_code=500, detail="R script execution failed.")
-
-    # tmp_dir = os.path.expanduser('/app')
-    # list_of_files = glob.glob(os.path.join(tmp_dir, '*'))
-    # latest_image = max(list_of_files, key=os.path.getctime)
-    # print(latest_image)
-
-    # templates = Jinja2Templates(directory="templates")
-    #
-    # return templates.TemplateResponse(
-    #      "animate_csv.html", context={}
-    # )
-    # return templates.TemplateResponse(request=request,"animate_csv.html",{"file_path": latest_image})
+    res = subprocess.call(["Rscript", r_script_path, file_path])
+    res
