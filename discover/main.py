@@ -15,26 +15,26 @@ logger = logging.getLogger(__name__)
 async def alpha_function(log):
     net, initial_marking, final_marking = alpha_miner.apply(log)
     gviz = pn_visualizer.apply(net, initial_marking, final_marking)
-    diagram_visual.save(gviz, "lpha_miner.png")
+    diagram_visual.save(gviz, "src/outputs/diagram.png")
     return net, initial_marking, final_marking
 
 
-async def alpha_miner_algo(file, output_path):
+async def alpha_miner_algo(file):
     log = await read_files(file)
-    await alpha_function(log, output_path)
+    await alpha_function(log)
 
 
 async def alpha_algo_quality(file, output_path, fitness_approach, precision_approach):
     log = await read_files(file)
-    net, initial_marking, final_marking = await alpha_function(log, output_path)
+    net, initial_marking, final_marking = await alpha_function(log)
 
     json_path = calculate_quality(log, initial_marking, final_marking, fitness_approach, precision_approach,
                                   output_path)
-    pm4py.write.write_pnml(net, im, fm, output_path + "pnml_file")
+    pm4py.write.write_pnml(net, initial_marking, final_marking, "src/outputs/pnml_file.pnml")
 
-    zip_path = generate_zip(output_path + "Alpha_miner.png", output_path + "pnml_file.pnml", json_path)
+    zip_path = generate_zip("src/outputs/diagram.png", "src/outputs/pnml_file.pnml", json_path)
+
     return zip_path
-
 
 # able to discover more complex connections, handle loops and connections effectively7
 
@@ -51,10 +51,10 @@ async def alpha_miner_plus(file):
 
 async def alpha_miner_plus_quality(file, fitness_approach: str = "token based", precision_approach: str = "token based"):
     log = await read_files(file)
-    net, im, fm = await miner_plus_function(log)
+    net, initial_marking, final_marking = await miner_plus_function(log)
 
-    json_path = calculate_quality(log, net, im, fm, fitness_approach, precision_approach)
-    pm4py.write.write_pnml(net, im, fm, "src/outputs/pnml_file.pnml")
+    json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
+    pm4py.write.write_pnml(net, initial_marking, final_marking, "src/outputs/pnml_file.pnml")
 
     zip_path = generate_zip("src/outputs/diagram.png", "src/outputs/pnml_file.pnml", json_path)
 
@@ -132,7 +132,7 @@ async def inductive_miner_quality(file, noise_threshold, fitness_approach: str =
     net, initial_marking, final_marking = await inductive_miner_function(log, noise_threshold)
 
     json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
-    pm4py.write.write_pnml(net, im, fm, "src/outputs/pnml_file")
+    pm4py.write.write_pnml(net, initial_marking, final_marking, "src/outputs/pnml_file")
 
     zip_path = generate_zip("src/outputs/diagram.png", "src/outputs/pnml_file.pnml", json_path)
 
