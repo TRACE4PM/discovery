@@ -3,6 +3,8 @@ import pm4py
 from pm4py.algo.discovery.alpha import algorithm as alpha_miner
 from pm4py.visualization.petri_net import visualizer as pn_visualizer
 from pm4py.visualization.align_table import visualizer as diagram_visual
+from pm4py.visualization.heuristics_net import visualizer as hn_visualizer
+from pm4py.visualization.process_tree import visualizer as pt_visualizer
 from pm4py.algo.discovery.alpha import variants
 from pm4py.objects.conversion.dfg.variants import to_petri_net_invisibles_no_duplicates
 import subprocess
@@ -28,7 +30,7 @@ async def alpha_algo_quality(file, fitness_approach, precision_approach):
     log = await read_files(file)
     net, initial_marking, final_marking = await alpha_function(log)
 
-    json_path = calculate_quality(log, initial_marking, final_marking, fitness_approach, precision_approach)
+    json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
     pm4py.write.write_pnml(net, initial_marking, final_marking, "src/outputs/pnml_file.pnml")
 
     zip_path = generate_zip("src/outputs/diagram.png", "src/outputs/pnml_file.pnml", json_path)
@@ -188,7 +190,7 @@ async def dfg_petri_quality(file, fitness_approach: str = "token based", precisi
 async def dfg_performance(file):
     log = await read_files(file)
     performance_dfg, start_activities, end_activities = pm4py.discover_performance_dfg(log)
-    pm4py.save_vis_performance_dfg(performance_dfg, start_activities, end_activities, "src/outputs/dfg.png")
+    pm4py.save_vis_performance_dfg(performance_dfg, start_activities, end_activities, "src/outputs/diagram.png")
 
 
 async def bpmn_model(file):

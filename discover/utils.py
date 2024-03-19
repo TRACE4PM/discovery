@@ -5,6 +5,9 @@ import pandas as pd
 import tempfile
 import pm4py
 import json
+from pm4py.algo.evaluation.generalization import algorithm as generalization_evaluator
+from pm4py.algo.evaluation.simplicity import algorithm as simplicity_evaluator
+
 
 
 async def read_csv(file_content):
