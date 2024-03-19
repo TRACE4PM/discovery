@@ -24,12 +24,11 @@ async def alpha_miner_algo(file):
     await alpha_function(log)
 
 
-async def alpha_algo_quality(file, output_path, fitness_approach, precision_approach):
+async def alpha_algo_quality(file, fitness_approach, precision_approach):
     log = await read_files(file)
     net, initial_marking, final_marking = await alpha_function(log)
 
-    json_path = calculate_quality(log, initial_marking, final_marking, fitness_approach, precision_approach,
-                                  output_path)
+    json_path = calculate_quality(log, initial_marking, final_marking, fitness_approach, precision_approach)
     pm4py.write.write_pnml(net, initial_marking, final_marking, "src/outputs/pnml_file.pnml")
 
     zip_path = generate_zip("src/outputs/diagram.png", "src/outputs/pnml_file.pnml", json_path)
