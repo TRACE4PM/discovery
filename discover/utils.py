@@ -63,16 +63,16 @@ def generate_zip(diagram_path, pnml_path, qual_path):
         return "ZIP file not created"
 
 
-def calculate_quality(log, net, im, fm, fitness_approach, precision_approach):
-    gen = generalization_evaluator.apply(log, net, im, fm)
-    if f == "token based":
-        fitness = pm4py.fitness_token_based_replay(log, net, im, fm)
+def calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach):
+    gen = generalization_evaluator.apply(log, net, initial_marking, final_marking)
+    if fitness_approach == "token based":
+        fitness = pm4py.fitness_token_based_replay(log, net, initial_marking, final_marking)
     else:
-        fitness = pm4py.fitness_alignments(log, net, im, fm)
-    if p == "token based":
-        prec = pm4py.precision_token_based_replay(log, net, im, fm)
+        fitness = pm4py.fitness_alignments(log, net, initial_marking, final_marking)
+    if precision_approach == "token based":
+        prec = pm4py.precision_token_based_replay(log, net, initial_marking, final_marking)
     else:
-        prec = pm4py.precision_alignments(log, net, im, fm)
+        prec = pm4py.precision_alignments(log, net, initial_marking, final_marking)
 
     simp = simplicity_evaluator.apply(net)
 

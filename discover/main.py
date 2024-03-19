@@ -35,6 +35,7 @@ async def alpha_algo_quality(file, fitness_approach, precision_approach):
 
     return zip_path
 
+
 # able to discover more complex connections, handle loops and connections effectively7
 
 async def miner_plus_function(log):
@@ -48,7 +49,9 @@ async def alpha_miner_plus(file):
     log = await read_files(file)
     await miner_plus_function(log)
 
-async def alpha_miner_plus_quality(file, fitness_approach: str = "token based", precision_approach: str = "token based"):
+
+async def alpha_miner_plus_quality(file, fitness_approach: str = "token based",
+                                   precision_approach: str = "token based"):
     log = await read_files(file)
     net, initial_marking, final_marking = await miner_plus_function(log)
 
@@ -161,7 +164,6 @@ async def directly_follow(file):
     log = await read_files(file)
 
     dfg, start_activities, end_activities = dfg_function(log)
-
     precision = pm4py.algo.evaluation.precision.dfg.algorithm.apply(log, dfg, start_activities, end_activities)
     results = {"precision": str(precision)}
 
@@ -177,7 +179,7 @@ async def dfg_petri_quality(file, fitness_approach: str = "token based", precisi
 
     net, initial_marking, final_marking = to_petri_net_invisibles_no_duplicates.apply(dfg, parameters=parameters)
     json_path = calculate_quality(log, initial_marking, final_marking, fitness_approach, precision_approach)
-    pm4py.write.write_pnml(net, initial_marking, final_marking,  "src/outputs/pnml_file")
+    pm4py.write.write_pnml(net, initial_marking, final_marking, "src/outputs/pnml_file")
 
     zip_path = generate_zip("src/outputs/diagram.png", "src/outputs/pnml_file.pnml", json_path)
     return zip_path
@@ -193,12 +195,12 @@ async def bpmn_model(file):
     log = await read_files(file)
     process_tree = pm4py.discover_process_tree_inductive(log)
     # Convert the process tree to a BPMN model
-    bpmn_model = pm4py.convert_to_bpmn(process_tree)
-    pm4py.visualization.bpmn.visualizer.save(bpmn_model, "src/outputs/diagram.png")
+    bpmn = pm4py.convert_to_bpmn(process_tree)
+    pm4py.visualization.bpmn.visualizer.save(bpmn, "src/outputs/diagram.png")
 
 
 async def process_animate(file_path):
-     # Call the R function with the file path
+    # Call the R function with the file path
     r_script_path = os.path.join(os.path.dirname(__file__), "file.R")
     res = subprocess.call(["Rscript", r_script_path, file_path])
     return res
