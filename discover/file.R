@@ -14,14 +14,9 @@
 # install.packages("processmapR")
 # install.packages("processanimateR")
 #    install.packages("dplyr")
-#  install.packages("igraph’")
+#  install.packages("igraph")
 #      install.packages("xesreadR")
 #     install.packages("processanimateR")
-
-require("curl")
-require("bupaR")
-require("xesreadR")
-require("processanimateR")
 
 library(dplyr)
 library(bupaR)
@@ -35,7 +30,7 @@ animate_csv <- function(csv_path) {
     } else {
         stop("Wrong file format")
     }
-#
+
 #     log$X.timestamp <- as.POSIXct(log$X.timestamp, format = "%Y-%m-%d %H:%M:%OS")
 #     log$X.timestamp <- as.POSIXct(sub("\\+.*$", "", log$timestamp), format = "%Y-%m-%dT%H:%M:%S")
 
@@ -82,9 +77,6 @@ animate_xes <- function(xes_path) {
     } else {
         stop("Wrong file format")
     }
-
-# log = read_xes('src/logs/running-example.xes')
-#   log = read_xes(xes_path)
   animation <- animate_process(log,
                          mode = "relative", jitter = 10, legend = "color",
                          mapping = token_aes(color = token_scale("users",

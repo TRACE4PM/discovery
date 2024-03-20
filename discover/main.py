@@ -155,8 +155,6 @@ async def dfg_function(log):
     dfg, start_activities, end_activities = pm4py.discover_dfg(log, case_id_key='case:concept:name',
                                                                activity_key='concept:name',
                                                                timestamp_key='time:timestamp')
-
-    pm4py.view_dfg(dfg, start_activities, end_activities)
     pm4py.save_vis_dfg(dfg, start_activities, end_activities, "src/outputs/diagram.png")
 
     return dfg, start_activities, end_activities
@@ -164,13 +162,7 @@ async def dfg_function(log):
 
 async def directly_follow(file):
     log = await read_files(file)
-
-    dfg, start_activities, end_activities = await dfg_function(log)
-    precision = pm4py.algo.evaluation.precision.dfg.algorithm.apply(log, dfg, start_activities, end_activities)
-    results = {"precision": str(precision)}
-
-    return results
-
+    await dfg_function(log)
 
 async def dfg_petri_quality(file, fitness_approach: str = "token based", precision_approach: str = "token based"):
     log = await read_files(file)
@@ -180,7 +172,7 @@ async def dfg_petri_quality(file, fitness_approach: str = "token based", precisi
                   to_petri_net_invisibles_no_duplicates.Parameters.END_ACTIVITIES: end_activities}
 
     net, initial_marking, final_marking = to_petri_net_invisibles_no_duplicates.apply(dfg, parameters=parameters)
-    json_path = calculate_quality(log, initial_marking, final_marking, fitness_approach, precision_approach)
+    json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
     pm4py.write.write_pnml(net, initial_marking, final_marking, "src/outputs/pnml_file")
 
     zip_path = generate_zip("src/outputs/diagram.png", "src/outputs/pnml_file.pnml", json_path)
