@@ -18,7 +18,6 @@
 #      install.packages("xesreadR")
 #     install.packages("processanimateR")
 
-
 require("curl")
 require("bupaR")
 require("xesreadR")
@@ -28,31 +27,38 @@ library(dplyr)
 library(bupaR)
 library(xesreadR)
 library(processanimateR)
-
+library(anytime)
 
 animate_csv <- function(csv_path) {
-
     if (endsWith(csv_path, ".csv")) {
         log <- read.csv(csv_path, sep = ';')
     } else {
         stop("Wrong file format")
     }
+#
+#     log$X.timestamp <- as.POSIXct(log$X.timestamp, format = "%Y-%m-%d %H:%M:%OS")
+#     log$X.timestamp <- as.POSIXct(sub("\\+.*$", "", log$timestamp), format = "%Y-%m-%dT%H:%M:%S")
 
-#     log = read.csv('src/logs/Digital-Library-logs.csv',sep=';')
-    log$X.timestamp <- as.POSIXct(log$X.timestamp, format = "%Y-%m-%d %H:%M:%OS")
+    log$X.timestamp <- anytime(log$timestamp)
+
+    for (col_name in colnames(log)) {
+        if (endsWith(col_name, "_id")) {
+            colnames(log)[colnames(log) == col_name] <- "case_id"
+        }
+    }
 
     log <- log %>%
       mutate(activity_instance_id = row_number())
 
     log <- log %>%
-        group_by(session_id) %>%
+        group_by(case_id) %>%
         mutate(lifecycle_id = row_number())
 
     # Generate a resource_id based on the 'action' column
     log <- log %>%
         mutate(resource_id = as.factor(action))
 
-    log <- eventlog(log, case_id = "session_id", activity_id = "action",
+    log <- eventlog(log, case_id = "case_id", activity_id = "action",
                 activity_instance_id = "activity_instance_id", lifecycle_id= "lifecycle_id",
                  resource_id= "resource_id", timestamp = "X.timestamp")
 
@@ -61,10 +67,9 @@ animate_csv <- function(csv_path) {
         scale = "ordinal",
         range = RColorBrewer::brewer.pal(7, "Paired"))))
 
-    htmlwidgets::saveWidget(animation, file = "animation_csv.html", selfcontained = FALSE)
+    htmlwidgets::saveWidget(animation, file = "process_animation.html", selfcontained = FALSE)
 
-#     options(browser = "kfmclient newTab")
-     browseURL("animation_csv.html")
+     browseURL("process_animation.html")
  }
 
 
@@ -86,8 +91,8 @@ animate_xes <- function(xes_path) {
                          scale = "ordinal",
                          range = RColorBrewer::brewer.pal(7, "Paired"))))
 
-htmlwidgets::saveWidget(animation, file = "animation_xes.html", selfcontained = FALSE)
-browseURL("animation_xes.html")
+htmlwidgets::saveWidget(animation, file = "process_animation.html", selfcontained = FALSE)
+browseURL("process_animation.html")
 
 }
 

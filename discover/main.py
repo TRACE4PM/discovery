@@ -165,7 +165,7 @@ async def dfg_function(log):
 async def directly_follow(file):
     log = await read_files(file)
 
-    dfg, start_activities, end_activities = dfg_function(log)
+    dfg, start_activities, end_activities = await dfg_function(log)
     precision = pm4py.algo.evaluation.precision.dfg.algorithm.apply(log, dfg, start_activities, end_activities)
     results = {"precision": str(precision)}
 
@@ -175,7 +175,7 @@ async def directly_follow(file):
 async def dfg_petri_quality(file, fitness_approach: str = "token based", precision_approach: str = "token based"):
     log = await read_files(file)
 
-    dfg, start_activities, end_activities = dfg_function(log)
+    dfg, start_activities, end_activities = await dfg_function(log)
     parameters = {to_petri_net_invisibles_no_duplicates.Parameters.START_ACTIVITIES: start_activities,
                   to_petri_net_invisibles_no_duplicates.Parameters.END_ACTIVITIES: end_activities}
 
@@ -195,10 +195,8 @@ async def dfg_performance(file):
 
 async def bpmn_model(file):
     log = await read_files(file)
-    process_tree = pm4py.discover_process_tree_inductive(log)
-    # Convert the process tree to a BPMN model
-    bpmn = pm4py.convert_to_bpmn(process_tree)
-    pm4py.visualization.bpmn.visualizer.save(bpmn, "src/outputs/diagram.png")
+    bpmn_graph = pm4py.discover_bpmn_inductive(log)
+    pm4py.save_vis_bpmn(bpmn_graph, "src/outputs/diagram.png")
 
 
 async def process_animate(file_path):
