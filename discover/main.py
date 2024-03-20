@@ -86,11 +86,19 @@ async def heuristic_miner(file):
     hn_visualizer.save(gviz, "src/outputs/diagram.png")
 
 
-async def heuristic_miner_petri(file):
+async def heuristic_miner_petri(file, fitness_approach: str = "token based",
+                                precision_approach: str = "token based"):
     log = await read_files(file)
-    net, initial_marking, final_marking, = pm4py.discover_petri_net_heuristics(log)
-    gviz = pn_visualizer.apply(net, initial_marking, final_marking, )
+    net, initial_marking, final_marking = pm4py.discover_petri_net_heuristics(log)
+    gviz = pn_visualizer.apply(net, initial_marking, final_marking)
     diagram_visual.save(gviz, "src/outputs/diagram.png")
+
+    json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
+    pm4py.write.write_pnml(net, initial_marking, final_marking, "src/outputs/pnml_file.pnml")
+
+    zip_path = generate_zip("src/outputs/diagram.png", "src/outputs/pnml_file.pnml", json_path)
+
+    return zip_path
 
 
 async def heuristic_params_threshold(file, parameter: str, value: float):
@@ -163,6 +171,9 @@ async def dfg_function(log):
 async def directly_follow(file):
     log = await read_files(file)
     await dfg_function(log)
+    precision = pm4py.algo.evaluation.precision.dfg.algorithm.apply(log, dfg, start_activities, end_activities)
+    return precision
+
 
 async def dfg_petri_quality(file, fitness_approach: str = "token based", precision_approach: str = "token based"):
     log = await read_files(file)
