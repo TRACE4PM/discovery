@@ -170,7 +170,7 @@ async def dfg_function(log):
 
 async def directly_follow(file):
     log = await read_files(file)
-    await dfg_function(log)
+    dfg, start_activities, end_activities = await dfg_function(log)
     precision = pm4py.algo.evaluation.precision.dfg.algorithm.apply(log, dfg, start_activities, end_activities)
     return precision
 
