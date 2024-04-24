@@ -8,6 +8,9 @@ import json
 from pm4py.algo.evaluation.generalization import algorithm as generalization_evaluator
 from pm4py.algo.evaluation.simplicity import algorithm as simplicity_evaluator
 from zipfile import ZipFile
+from pm4py.algo.simulation.playout.petri_net import algorithm as simulator
+from pm4py.statistics.variants.log import get as variants_module
+from pm4py.algo.evaluation.earth_mover_distance import algorithm as emd_evaluator
 
 
 async def read_csv(file_content):
@@ -51,7 +54,7 @@ def latest_image():
 
 
 def generate_zip(diagram_path, pnml_path, qual_path):
-    zip_path = "src/outputs/Zipped_file.zip"
+    zip_path = "src/temp/Zipped_file.zip"
     with ZipFile(zip_path, 'w') as zip_object:
         # Adding files that need to be zipped
         zip_object.write(pnml_path,
@@ -79,13 +82,30 @@ def calculate_quality(log, net, initial_marking, final_marking, fitness_approach
 
     simp = simplicity_evaluator.apply(net)
 
+    edm = earth_distance(log, net, initial_marking, final_marking)
+
     results = {"Fitness": fitness,
                "Precision": prec,
                "Generalization": gen,
-               "Simplicity": simp}
+               "Simplicity": simp,
+               "Earth Distance Mover": edm}
 
-    json_path = "src/outputs/quality.json"
+    json_path = "src/temp/quality.json"
     with open(json_path, "w") as outfile:
         json.dump(results, outfile)
 
     return json_path
+
+
+def earth_distance(log, net, im, fm):
+    # language: means a set of traces that is weighted according to its probability.
+    language = variants_module.get_language(log)
+
+    net, im, fm = alpha_miner.apply(log)
+    playout_log = simulator.apply(net, im, fm,
+                                  parameters={simulator.Variants.STOCHASTIC_PLAYOUT.value.Parameters.LOG: log},
+                                  variant=simulator.Variants.STOCHASTIC_PLAYOUT)
+    model_language = variants_module.get_language(playout_log)
+
+    emd = emd_evaluator.apply(model_language, language)
+    return emd

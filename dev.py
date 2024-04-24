@@ -1,16 +1,17 @@
 import subprocess
 import asyncio
 import pm4py
-from discover.main import (alpha_miner_alg, alpha_miner_quality, heuristic_miner, inductive_miner,
-                           heuristic_params_threshold, inductive_miner_tree,inductive_miner_quality, dfg_to_petrinet)
+from discover.main import (alpha_miner_algo)
+import os
 from discover.utils import read_files
 #
 #
 async def alph():
-    # file = '/home/ania/Desktop/trace_clustering/services/discover/test/running-example.xes'
-    file = '/home/ania/Desktop/trace_clustering/services/discover/test/Digital-Library-logs.csv'
-    result = await alpha_miner_alg(file,";")
-    print(result)
+    file_path = '/home/ania/Desktop/trace_clustering/services/clustering/test/result_res10k.csv'
+
+    with open(file_path, "rb") as file:
+        await alpha_miner_algo(file)
+
 
 async def main():
     await alph()

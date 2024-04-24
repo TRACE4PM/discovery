@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 async def alpha_function(log):
     net, initial_marking, final_marking = alpha_miner.apply(log)
     gviz = pn_visualizer.apply(net, initial_marking, final_marking)
-    diagram_visual.save(gviz, "src/outputs/diagram.png")
+    diagram_visual.save(gviz, "src/temp/diagram.png")
     return net, initial_marking, final_marking
 
 
@@ -31,9 +31,9 @@ async def alpha_algo_quality(file, fitness_approach, precision_approach):
     net, initial_marking, final_marking = await alpha_function(log)
 
     json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
-    pm4py.write.write_pnml(net, initial_marking, final_marking, "src/outputs/pnml_file.pnml")
+    pm4py.write.write_pnml(net, initial_marking, final_marking, "src/temp/pnml_file.pnml")
 
-    zip_path = generate_zip("src/outputs/diagram.png", "src/outputs/pnml_file.pnml", json_path)
+    zip_path = generate_zip("src/temp/diagram.png", "src/temp/pnml_file.pnml", json_path)
 
     return zip_path
 
@@ -43,7 +43,7 @@ async def alpha_algo_quality(file, fitness_approach, precision_approach):
 async def miner_plus_function(log):
     net, initial_marking, final_marking = alpha_miner.apply(log, variant=variants.plus)
     gviz = pn_visualizer.apply(net, initial_marking, final_marking)
-    diagram_visual.save(gviz, "src/outputs/diagram.png")
+    diagram_visual.save(gviz, "src/temp/diagram.png")
     return net, initial_marking, final_marking
 
 
@@ -58,9 +58,9 @@ async def alpha_miner_plus_quality(file, fitness_approach: str = "token based",
     net, initial_marking, final_marking = await miner_plus_function(log)
 
     json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
-    pm4py.write.write_pnml(net, initial_marking, final_marking, "src/outputs/pnml_file.pnml")
+    pm4py.write.write_pnml(net, initial_marking, final_marking, "src/temp/pnml_file.pnml")
 
-    zip_path = generate_zip("src/outputs/diagram.png", "src/outputs/pnml_file.pnml", json_path)
+    zip_path = generate_zip("src/temp/diagram.png", "src/temp/pnml_file.pnml", json_path)
 
     return zip_path
 
@@ -74,7 +74,7 @@ async def freq_alpha_miner(file):
                                parameters=parameters,
                                variant=pn_visualizer.Variants.FREQUENCY,
                                log=log)
-    output_path = "src/outputs/diagram.png"
+    output_path = "src/temp/diagram.png"
     diagram_visual.save(gviz, output_path)
 
 
@@ -83,7 +83,7 @@ async def heuristic_miner(file):
     heuristic_net = pm4py.discover_heuristics_net(log, activity_key='concept:name', case_id_key='case:concept:name',
                                                   timestamp_key='time:timestamp')
     gviz = hn_visualizer.apply(heuristic_net)
-    hn_visualizer.save(gviz, "src/outputs/diagram.png")
+    hn_visualizer.save(gviz, "src/temp/diagram.png")
 
 
 async def heuristic_miner_petri(file, fitness_approach: str = "token based",
@@ -91,12 +91,12 @@ async def heuristic_miner_petri(file, fitness_approach: str = "token based",
     log = await read_files(file)
     net, initial_marking, final_marking = pm4py.discover_petri_net_heuristics(log)
     gviz = pn_visualizer.apply(net, initial_marking, final_marking)
-    diagram_visual.save(gviz, "src/outputs/diagram.png")
+    diagram_visual.save(gviz, "src/temp/diagram.png")
 
     json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
-    pm4py.write.write_pnml(net, initial_marking, final_marking, "src/outputs/pnml_file.pnml")
+    pm4py.write.write_pnml(net, initial_marking, final_marking, "src/temp/pnml_file.pnml")
 
-    zip_path = generate_zip("src/outputs/diagram.png", "src/outputs/pnml_file.pnml", json_path)
+    zip_path = generate_zip("src/temp/diagram.png", "src/temp/pnml_file.pnml", json_path)
 
     return zip_path
 
@@ -119,14 +119,14 @@ async def heuristic_params_threshold(file, parameter: str, value: float):
         raise ValueError("Invalid parameter name")
 
     gviz = hn_visualizer.apply(heuristic_net)
-    hn_visualizer.save(gviz, "src/outputs/diagram.png")
+    hn_visualizer.save(gviz, "src/temp/diagram.png")
 
 
 async def inductive_miner_function(log, noise_threshold):
     # noise threshold: filters noisy behavior, activities that are infrequent and outliers
     net, initial_marking, final_marking = pm4py.discover_petri_net_inductive(log, noise_threshold)
     gviz = pn_visualizer.apply(net, initial_marking, final_marking)
-    diagram_visual.save(gviz, "src/outputs/diagram.png")
+    diagram_visual.save(gviz, "src/temp/diagram.png")
     return net, initial_marking, final_marking
 
 
@@ -144,9 +144,9 @@ async def inductive_miner_quality(file, noise_threshold, fitness_approach: str =
     net, initial_marking, final_marking = await inductive_miner_function(log, noise_threshold)
 
     json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
-    pm4py.write.write_pnml(net, initial_marking, final_marking, "src/outputs/pnml_file")
+    pm4py.write.write_pnml(net, initial_marking, final_marking, "src/temp/pnml_file")
 
-    zip_path = generate_zip("src/outputs/diagram.png", "src/outputs/pnml_file.pnml", json_path)
+    zip_path = generate_zip("src/temp/diagram.png", "src/temp/pnml_file.pnml", json_path)
 
     return zip_path
 
@@ -156,14 +156,14 @@ async def inductive_miner_tree(file):
     tree = pm4py.discover_process_tree_inductive(log)
     pm4py.view_process_tree(tree)
     gviz = pt_visualizer.apply(tree)
-    pt_visualizer.save(gviz, "src/outputs/diagram.png")
+    pt_visualizer.save(gviz, "src/temp/diagram.png")
 
 
 async def dfg_function(log):
     dfg, start_activities, end_activities = pm4py.discover_dfg(log, case_id_key='case:concept:name',
                                                                activity_key='concept:name',
                                                                timestamp_key='time:timestamp')
-    pm4py.save_vis_dfg(dfg, start_activities, end_activities, "src/outputs/diagram.png")
+    pm4py.save_vis_dfg(dfg, start_activities, end_activities, "src/temp/diagram.png")
 
     return dfg, start_activities, end_activities
 
@@ -184,22 +184,22 @@ async def dfg_petri_quality(file, fitness_approach: str = "token based", precisi
 
     net, initial_marking, final_marking = to_petri_net_invisibles_no_duplicates.apply(dfg, parameters=parameters)
     json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
-    pm4py.write.write_pnml(net, initial_marking, final_marking, "src/outputs/pnml_file")
+    pm4py.write.write_pnml(net, initial_marking, final_marking, "src/temp/pnml_file")
 
-    zip_path = generate_zip("src/outputs/diagram.png", "src/outputs/pnml_file.pnml", json_path)
+    zip_path = generate_zip("src/temp/diagram.png", "src/temp/pnml_file.pnml", json_path)
     return zip_path
 
 
 async def dfg_performance(file):
     log = await read_files(file)
     performance_dfg, start_activities, end_activities = pm4py.discover_performance_dfg(log)
-    pm4py.save_vis_performance_dfg(performance_dfg, start_activities, end_activities, "src/outputs/diagram.png")
+    pm4py.save_vis_performance_dfg(performance_dfg, start_activities, end_activities, "src/temp/diagram.png")
 
 
 async def bpmn_model(file):
     log = await read_files(file)
     bpmn_graph = pm4py.discover_bpmn_inductive(log)
-    pm4py.save_vis_bpmn(bpmn_graph, "src/outputs/diagram.png")
+    pm4py.save_vis_bpmn(bpmn_graph, "src/temp/diagram.png")
 
 
 async def process_animate(file_path):
