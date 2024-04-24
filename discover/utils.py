@@ -100,8 +100,6 @@ def calculate_quality(log, net, initial_marking, final_marking, fitness_approach
 def earth_distance(log, net, im, fm):
     # language: means a set of traces that is weighted according to its probability.
     language = variants_module.get_language(log)
-
-    net, im, fm = alpha_miner.apply(log)
     playout_log = simulator.apply(net, im, fm,
                                   parameters={simulator.Variants.STOCHASTIC_PLAYOUT.value.Parameters.LOG: log},
                                   variant=simulator.Variants.STOCHASTIC_PLAYOUT)
