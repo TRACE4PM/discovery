@@ -1,16 +1,14 @@
 import subprocess
 import asyncio
 import pm4py
-from discover.main import (alpha_miner_algo)
+from discover.main import (alpha_miner_algo, alpha_algo_quality)
 import os
 from discover.utils import read_files
 #
 #
 async def alph():
     file_path = '/home/ania/Desktop/trace_clustering/services/clustering/test/result_res10k.csv'
-
-    with open(file_path, "rb") as file:
-        await alpha_miner_algo(file)
+    await alpha_algo_quality(file_path,'token based', 'token based')
 
 
 async def main():

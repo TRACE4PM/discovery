@@ -2,16 +2,7 @@
 
 
 
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
 ## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
 
 ```
 cd existing_repo
@@ -20,74 +11,62 @@ git branch -M main
 git push -uf origin main
 ```
 
-## Integrate with your tools
+## Installation and Configuration
+- Pour utiliser le service discover dans le projet, il faut juste l'installer comme un module python. Dans notre cas, avec poetry, il suffit d'exécuter les différentes étapes suivantes :
+    - Inclure le lien du dépôt du service dans le fichier de configuration (pyproject.toml) du projet dans la section [tool.poetry.dependencies] de la manière suivante (discover = {git = "https://gitlab.univ-lr.fr/trace_clustering/services/discovery.git"})
+    - Installer le service comme un module avec la commande suivante (poetry add discover)
+    - Importer les fonctions du service comme on importe n'importe quel module python par exemple (from discover.main import heuristic_miner) et importer l'algorithm de process discovery que vous voulez utiliser
+    - Installer R  et quelqes packages necessaire pour le fonctionnement de l'animation
+```
+  install.packages("bupaR")
+  install.packages("curl")
+  install.packages("dplyr")
+  install.packages("xesreadR")
+  install.packages("processanimateR")
+   ```
+Dependencies : (a tester si ça peut marcher sans les installer) 
+```
+  install.packages("magrittr")
+  install.packages("rmarkdown")
+  install.packages("plotly")
+  install.packages("openssl")
+  install.packages("igraph")
+  install.packages("DiagrammeR")
+  install.packages("processmapR")
+```
 
-- [ ] [Set up project integrations](https://gitlab.univ-lr.fr/trace_clustering/services/discovery/-/settings/integrations)
+### Fonctionnement du discover 
+Ce service discover implémente plusieurs algorithmes pour le process discovery des fichiers logs en utilisant la packet PM4PY. 
+Les algorithmes peuvent traiter des fichiers en format `.csv` ou `.xes`.
+Chaque algorithme a 2 fonctions, comme par exemple le Alpha miner, on a la fonction `alpha_miner_algo ` qui  génère un **modele Petri Net** et le sauvegarder en tant que png dans un fichier temp. 
+Le 2eme fonction sert a déterminer la qualité du modèle généré, en calculant les mesures : la fitness,la précision, la généralisation
+et la simplicité. Cette fonction retourne un fichier Zip qui contient: 
+- un PNG du modèle généré par l'algorithme 
+- un JSON des mesures de qualités calculé
+- un pnml file.
+En ce qui concerne le calcul de la fitness et la précision 2 approches sont proposées : 
+- Token based 
+- Alignemet based 
 
-## Collaborate with your team
+Ce service implémente également une fonction `process_animate` qui produit une animation du fichier log en utilisant 
+la librairie `processanimateR` du packet `BupaR`, il faut donc avoir installé un environnement R et les librairies 
+necessaires. 
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
 
-## Test and Deploy
 
-Use the built-in continuous integration in GitLab.
+### Contributions et Améliorations
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+Les contributions à ce projet sont les bienvenues. Si vous souhaitez apporter des améliorations, veuillez suivre les étapes suivantes :
 
-***
+    Forkez le dépôt et clonez votre propre copie.
+    Créez une branche pour vos modifications : git checkout -b feature/ma-nouvelle-fonctionnalite
+    Effectuez les modifications nécessaires et testez-les de manière approfondie.
+    Soumettez une pull request en expliquant en détail les modifications apportées et leur impact.
 
-# Editing this README
+### Auteur(s)
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+    - Amira Ania DAHACHE
 
-## Suggestions for a good README
+### Licence
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Ce projet est sous licence L3I.

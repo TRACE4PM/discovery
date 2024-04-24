@@ -8,14 +8,15 @@ import json
 from pm4py.algo.evaluation.generalization import algorithm as generalization_evaluator
 from pm4py.algo.evaluation.simplicity import algorithm as simplicity_evaluator
 from zipfile import ZipFile
-from pm4py.algo.simulation.playout.petri_net import algorithm as simulator
-from pm4py.statistics.variants.log import get as variants_module
-from pm4py.algo.evaluation.earth_mover_distance import algorithm as emd_evaluator
+# from pm4py.algo.simulation.playout.petri_net import algorithm as simulator
+# from pm4py.statistics.variants.log import get as variants_module
+# from pm4py.algo.evaluation.earth_mover_distance import algorithm as emd_evaluator
 
 
 
-async def read_csv(file_content):
-    dataframe = pd.read_csv(io.StringIO(file_content.decode('utf-8')), sep=";")
+async def read_csv(file):
+    # file_content = await file.read()
+    dataframe = pd.read_csv(file, sep=";")
 
     # renaming the col ending with _id
     dataframe.rename(columns=lambda x: 'case:concept:name' if x.endswith('_id') else x, inplace=True)
@@ -32,17 +33,25 @@ async def read_csv(file_content):
     return log
 
 
-async def read_files(file):
-    file_content = await file.read()
-    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-        temp_file.write(file_content)
-        temp_file_path = temp_file.name
-        if file.filename.endswith('.csv'):
-            log = await read_csv(file_content)
-        elif file.filename.endswith('.xes'):
-            log = pm4py.read_xes(temp_file_path)
+# async def read_files(file):
+#     file_content = await file.read()
+#     with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+#         temp_file.write(file_content)
+#         temp_file_path = temp_file.name
+#         if file.filename.endswith('.csv'):
+#             log = await read_csv(file_content)
+#         elif file.filename.endswith('.xes'):
+#             log = pm4py.read_xes(temp_file_path)
+#
+#     os.remove(temp_file_path)
+#     return log
 
-    os.remove(temp_file_path)
+async def read_files(file_path):
+    extension = os.path.splitext(file_path)[1].lower()
+    if extension == '.csv':
+        log = await read_csv(file_path)
+    elif extension == '.xes':
+        log = pm4py.read_xes(file_path)
     return log
 
 
@@ -58,9 +67,10 @@ def generate_zip(diagram_path, pnml_path, qual_path):
     zip_path = "src/temp/Zipped_file.zip"
     with ZipFile(zip_path, 'w') as zip_object:
         # Adding files that need to be zipped
-        zip_object.write(pnml_path,
-                         arcname='pnml_file.pnml')
-        zip_object.write(diagram_path, arcname="gviz_diagram.png")
+        zip_object.write(pnml_path,arcname='pnml_file.pnml')
+
+        name_png = os.path.split(diagram_path)
+        zip_object.write(diagram_path, arcname = name_png[1])
         zip_object.write(qual_path, arcname="algo_quality.json")
 
     # Check to see if the zip file is created
@@ -97,17 +107,17 @@ def calculate_quality(log, net, initial_marking, final_marking, fitness_approach
 
     return json_path
 
-
-def earth_distance(log, net, im, fm):
-
-    # language mean a set of traces that is weighted according to its probability.
-    language = variants_module.get_language(log)
-
-    net, im, fm = alpha_miner.apply(log)
-    playout_log = simulator.apply(net, im, fm,
-                                  parameters={simulator.Variants.STOCHASTIC_PLAYOUT.value.Parameters.LOG: log},
-                                  variant=simulator.Variants.STOCHASTIC_PLAYOUT)
-    model_language = variants_module.get_language(playout_log)
-
-    emd = emd_evaluator.apply(model_language, language)
-    return emd
+#
+# def earth_distance(log, net, im, fm):
+#
+#     # language mean a set of traces that is weighted according to its probability.
+#     language = variants_module.get_language(log)
+#
+#     net, im, fm = alpha_miner.apply(log)
+#     playout_log = simulator.apply(net, im, fm,
+#                                   parameters={simulator.Variants.STOCHASTIC_PLAYOUT.value.Parameters.LOG: log},
+#                                   variant=simulator.Variants.STOCHASTIC_PLAYOUT)
+#     model_language = variants_module.get_language(playout_log)
+#
+#     emd = emd_evaluator.apply(model_language, language)
+#     return emd

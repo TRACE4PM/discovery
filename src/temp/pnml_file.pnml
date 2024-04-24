@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pnml>
+  <net id="alpha_classic_net_1713971699.788189" type="http://www.pnml.org/version-2009/grammar/pnmlcoremodel">
+    <name>
+      <text>alpha_classic_net_1713971699.788189</text>
+    </name>
+    <page id="n0">
+      <place id="start">
+        <name>
+          <text>start</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="end">
+        <name>
+          <text>end</text>
+        </name>
+      </place>
+      <transition id="CollectionNavigation">
+        <name>
+          <text>CollectionNavigation</text>
+        </name>
+      </transition>
+      <transition id="DownloadRessource">
+        <name>
+          <text>DownloadRessource</text>
+        </name>
+      </transition>
+      <transition id="ResearchReportExtraction">
+        <name>
+          <text>ResearchReportExtraction</text>
+        </name>
+      </transition>
+      <transition id="ViewingRessource">
+        <name>
+          <text>ViewingRessource</text>
+        </name>
+      </transition>
+      <transition id="HomePage">
+        <name>
+          <text>HomePage</text>
+        </name>
+      </transition>
+      <transition id="AdvancedSearch">
+        <name>
+          <text>AdvancedSearch</text>
+        </name>
+      </transition>
+      <transition id="AccessGallicaBlog">
+        <name>
+          <text>AccessGallicaBlog</text>
+        </name>
+      </transition>
+      <transition id="GallicaSearchEngine">
+        <name>
+          <text>GallicaSearchEngine</text>
+        </name>
+      </transition>
+      <arc id="140529460496016" source="AccessGallicaBlog" target="end"/>
+      <arc id="140529460378832" source="start" target="CollectionNavigation"/>
+      <arc id="140529460371536" source="start" target="DownloadRessource"/>
+      <arc id="140529460379280" source="start" target="HomePage"/>
+      <arc id="140529461817808" source="start" target="AccessGallicaBlog"/>
+      <arc id="140529460379088" source="start" target="ViewingRessource"/>
+      <arc id="140529461809168" source="start" target="GallicaSearchEngine"/>
+      <arc id="140529460495888" source="CollectionNavigation" target="end"/>
+      <arc id="140529460495440" source="HomePage" target="end"/>
+      <arc id="140529460496080" source="DownloadRessource" target="end"/>
+      <arc id="140529460497104" source="ViewingRessource" target="end"/>
+      <arc id="140529460495696" source="GallicaSearchEngine" target="end"/>
+    </page>
+    <finalmarkings>
+      <marking>
+        <place idref="end">
+          <text>1</text>
+        </place>
+      </marking>
+    </finalmarkings>
+  </net>
+</pnml>
