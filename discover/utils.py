@@ -13,6 +13,7 @@ from pm4py.statistics.variants.log import get as variants_module
 from pm4py.algo.evaluation.earth_mover_distance import algorithm as emd_evaluator
 
 
+
 async def read_csv(file_content):
     dataframe = pd.read_csv(io.StringIO(file_content.decode('utf-8')), sep=";")
 
@@ -82,13 +83,13 @@ def calculate_quality(log, net, initial_marking, final_marking, fitness_approach
 
     simp = simplicity_evaluator.apply(net)
 
-    edm = earth_distance(log, net, initial_marking, final_marking)
+    # edm = earth_distance(log, net, initial_marking, final_marking)
 
     results = {"Fitness": fitness,
                "Precision": prec,
                "Generalization": gen,
                "Simplicity": simp,
-               "Earth Distance Mover": edm}
+              }
 
     json_path = "src/temp/quality.json"
     with open(json_path, "w") as outfile:
@@ -98,8 +99,11 @@ def calculate_quality(log, net, initial_marking, final_marking, fitness_approach
 
 
 def earth_distance(log, net, im, fm):
-    # language: means a set of traces that is weighted according to its probability.
+
+    # language mean a set of traces that is weighted according to its probability.
     language = variants_module.get_language(log)
+
+    net, im, fm = alpha_miner.apply(log)
     playout_log = simulator.apply(net, im, fm,
                                   parameters={simulator.Variants.STOCHASTIC_PLAYOUT.value.Parameters.LOG: log},
                                   variant=simulator.Variants.STOCHASTIC_PLAYOUT)
