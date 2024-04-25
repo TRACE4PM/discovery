@@ -47,14 +47,13 @@ async def read_csv(file):
 #     return log
 
 async def read_files(file_path):
-    global log
     extension = os.path.splitext(file_path)[1].lower()
     if extension == '.csv':
         log = await read_csv(file_path)
+        return log
     elif extension == '.xes':
         log = pm4py.read_xes(file_path)
-
-    return log
+        return log
 
 
 def latest_image():
