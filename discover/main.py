@@ -1,24 +1,28 @@
 import os
 import pm4py
+import subprocess
 from pm4py.algo.discovery.alpha import algorithm as alpha_miner
+from pm4py.algo.discovery.alpha import variants
 from pm4py.visualization.petri_net import visualizer as pn_visualizer
 from pm4py.visualization.align_table import visualizer as diagram_visual
 from pm4py.visualization.heuristics_net import visualizer as hn_visualizer
 from pm4py.visualization.process_tree import visualizer as pt_visualizer
-from pm4py.algo.discovery.alpha import variants
 from pm4py.objects.conversion.dfg.variants import to_petri_net_invisibles_no_duplicates
-import subprocess
 from .utils import read_files, latest_image, generate_zip, calculate_quality
-import logging
-
-logger = logging.getLogger(__name__)
+from .models.qual_params import HeuristicParameters
 
 
 async def alpha_function(log):
-    net, initial_marking, final_marking = alpha_miner.apply(log)
-    gviz = pn_visualizer.apply(net, initial_marking, final_marking)
-    diagram_visual.save(gviz, "src/temp/alpha_petrinet.png")
-    return net, initial_marking, final_marking
+   """
+    applying alpha miner algorithm on a log file
+    Returns: petri net, initial marking and final marking
+   """
+   net, initial_marking, final_marking = alpha_miner.apply(log)
+   gviz = pn_visualizer.apply(net, initial_marking, final_marking)
+
+   # save the petri net in a png file
+   diagram_visual.save(gviz, "src/temp/alpha_petrinet.png")
+   return net, initial_marking, final_marking
 
 
 async def alpha_miner_algo(file):
@@ -27,6 +31,16 @@ async def alpha_miner_algo(file):
 
 
 async def alpha_algo_quality(file, fitness_approach, precision_approach):
+    """
+
+    Args:
+        file:
+        fitness_approach/ precision_approach: chose if token based or alignement based approach
+
+    Returns:
+        zip file: containing a json file of the quality of the model, a png of the petri net and a PNML file
+
+    """
     log = await read_files(file)
     net, initial_marking, final_marking = await alpha_function(log)
 
@@ -34,12 +48,10 @@ async def alpha_algo_quality(file, fitness_approach, precision_approach):
     pm4py.write.write_pnml(net, initial_marking, final_marking, "src/temp/pnml_file.pnml")
 
     zip_path = generate_zip("src/temp/alpha_petrinet.png", "src/temp/pnml_file.pnml", json_path)
-
     return zip_path
 
 
-# able to discover more complex connections, handle loops and connections effectively7
-
+# alpha miner plus able to discover more complex connections, handle loops and connections effectively7
 async def miner_plus_function(log):
     net, initial_marking, final_marking = alpha_miner.apply(log, variant=variants.plus)
     gviz = pn_visualizer.apply(net, initial_marking, final_marking)
@@ -101,17 +113,18 @@ async def heuristic_miner_petri(file, fitness_approach: str = "token based",
     return zip_path
 
 
-async def heuristic_params_threshold(file, parameter: str, value: float):
+async def heuristic_params_threshold(file, parameter: HeuristicParameters, value: float):
     log = await read_files(file)
-    if parameter == "dependency threshold":
+
+    if parameter.lower() == "dependency threshold":
         heuristic_net = pm4py.discover_heuristics_net(log, activity_key='concept:name',
                                                       case_id_key='case:concept:name',
                                                       timestamp_key='time:timestamp', dependency_threshold=value)
-    elif parameter == "and threshold":
+    elif parameter.lower() == "and threshold":
         heuristic_net = pm4py.discover_heuristics_net(log, activity_key='concept:name',
                                                       case_id_key='case:concept:name',
                                                       timestamp_key='time:timestamp', and_threshold=value)
-    elif parameter == "loop two threshold":
+    elif parameter.lower() == "loop two threshold":
         heuristic_net = pm4py.discover_heuristics_net(log, activity_key='concept:name',
                                                       case_id_key='case:concept:name',
                                                       timestamp_key='time:timestamp', loop_two_threshold=value)

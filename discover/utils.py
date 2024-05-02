@@ -8,14 +8,11 @@ import json
 from pm4py.algo.evaluation.generalization import algorithm as generalization_evaluator
 from pm4py.algo.evaluation.simplicity import algorithm as simplicity_evaluator
 from zipfile import ZipFile
-# from pm4py.algo.simulation.playout.petri_net import algorithm as simulator
-# from pm4py.statistics.variants.log import get as variants_module
-# from pm4py.algo.evaluation.earth_mover_distance import algorithm as emd_evaluator
-
+from .models.qual_params import QualityResult
 
 
 async def read_csv(file):
-    # file_content = await file.read()
+
     dataframe = pd.read_csv(file, sep=";")
 
     # renaming the col ending with _id
@@ -32,21 +29,8 @@ async def read_csv(file):
 
     return log
 
-
-# async def read_files(file):
-#     file_content = await file.read()
-#     with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-#         temp_file.write(file_content)
-#         temp_file_path = temp_file.name
-#         if file.filename.endswith('.csv'):
-#             log = await read_csv(file_content)
-#         elif file.filename.endswith('.xes'):
-#             log = pm4py.read_xes(temp_file_path)
-#
-#     os.remove(temp_file_path)
-#     return log
-
 async def read_files(file_path):
+    # read the log files depending on its extension
     extension = os.path.splitext(file_path)[1].lower()
     if extension == '.csv':
         log = await read_csv(file_path)
@@ -57,7 +41,9 @@ async def read_files(file_path):
 
 
 def latest_image():
-    tmp_dir = os.path.expanduser('/tmp')
+    # get the path of the latest image stored in temp files
+
+    tmp_dir = os.path.expanduser('/temp')
     list_of_files = glob.glob(os.path.join(tmp_dir, '*'))
     latest_image = max(list_of_files, key=os.path.getctime)
 
@@ -65,6 +51,7 @@ def latest_image():
 
 
 def generate_zip(diagram_path, pnml_path, qual_path):
+    # create a zip file containing the png of the model, its quality and the pnml file
     zip_path = "src/temp/Zipped_file.zip"
     with ZipFile(zip_path, 'w') as zip_object:
         # Adding files that need to be zipped
@@ -82,43 +69,22 @@ def generate_zip(diagram_path, pnml_path, qual_path):
 
 
 def calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach):
-    gen = generalization_evaluator.apply(log, net, initial_marking, final_marking)
+    generalization = generalization_evaluator.apply(log, net, initial_marking, final_marking)
     if fitness_approach == "token based":
         fitness = pm4py.fitness_token_based_replay(log, net, initial_marking, final_marking)
     else:
         fitness = pm4py.fitness_alignments(log, net, initial_marking, final_marking)
     if precision_approach == "token based":
-        prec = pm4py.precision_token_based_replay(log, net, initial_marking, final_marking)
+        precision = pm4py.precision_token_based_replay(log, net, initial_marking, final_marking)
     else:
-        prec = pm4py.precision_alignments(log, net, initial_marking, final_marking)
+        precision = pm4py.precision_alignments(log, net, initial_marking, final_marking)
 
-    simp = simplicity_evaluator.apply(net)
+    simplicity = simplicity_evaluator.apply(net)
 
-    # edm = earth_distance(log, net, initial_marking, final_marking)
-
-    results = {"Fitness": fitness,
-               "Precision": prec,
-               "Generalization": gen,
-               "Simplicity": simp,
-              }
+    results = QualityResult(Fitness=fitness, Precision= precision, Simplicity= simplicity,Generalization= generalization)
 
     json_path = "src/temp/quality.json"
     with open(json_path, "w") as outfile:
-        json.dump(results, outfile)
+        json.dump(results.json(), outfile)
 
     return json_path
-
-#
-# def earth_distance(log, net, im, fm):
-#
-#     # language mean a set of traces that is weighted according to its probability.
-#     language = variants_module.get_language(log)
-#
-#     net, im, fm = alpha_miner.apply(log)
-#     playout_log = simulator.apply(net, im, fm,
-#                                   parameters={simulator.Variants.STOCHASTIC_PLAYOUT.value.Parameters.LOG: log},
-#                                   variant=simulator.Variants.STOCHASTIC_PLAYOUT)
-#     model_language = variants_module.get_language(playout_log)
-#
-#     emd = emd_evaluator.apply(model_language, language)
-#     return emd
