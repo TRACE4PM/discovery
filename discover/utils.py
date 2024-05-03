@@ -7,6 +7,9 @@ import pm4py
 import json
 from pm4py.algo.evaluation.generalization import algorithm as generalization_evaluator
 from pm4py.algo.evaluation.simplicity import algorithm as simplicity_evaluator
+
+from pm4py.objects.conversion.log.variants import to_event_log
+
 from zipfile import ZipFile
 from .models.qual_params import QualityResult
 
@@ -25,7 +28,8 @@ async def read_csv(file):
 
     dataframe = pm4py.format_dataframe(dataframe, case_id='case:concept:name', activity_key='concept:name',
                                        timestamp_key='time:timestamp')
-    log = pm4py.convert_to_event_log(dataframe)
+
+    log = to_event_log.apply(dataframe)
 
     return log
 
@@ -51,6 +55,7 @@ def latest_image():
 
 
 def generate_zip(diagram_path, pnml_path, qual_path):
+
     # create a zip file containing the png of the model, its quality and the pnml file
     zip_path = "src/temp/Zipped_file.zip"
     with ZipFile(zip_path, 'w') as zip_object:
@@ -58,8 +63,14 @@ def generate_zip(diagram_path, pnml_path, qual_path):
         zip_object.write(pnml_path,arcname='pnml_file.pnml')
 
         name_png = os.path.split(diagram_path)
+
         zip_object.write(diagram_path, arcname = name_png[1])
         zip_object.write(qual_path, arcname="algo_quality.json")
+
+    # Remove the files from temp folder
+    os.remove(diagram_path)
+    os.remove(pnml_path)
+    os.remove(qual_path)
 
     # Check to see if the zip file is created
     if os.path.exists(zip_path):

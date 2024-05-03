@@ -7,7 +7,9 @@ class QualityResult(BaseModel):
     Generalization: float
     Simplicity: float
 
+
 class HeuristicParameters(BaseModel):
+    none = ""
     Dependency = "Dependency Threshold"
     And = "And Threshold"
-    LoopTwo= "Loop Two Threshold"
+    LoopTwo = "Loop Two Threshold"
