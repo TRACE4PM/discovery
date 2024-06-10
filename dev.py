@@ -1,16 +1,16 @@
 import asyncio
-from discover.main import ( alpha_miner_plus_quality,heuristic_miner, dfg_precision, process_animate,
+from discover.main import ( alpha_miner_algo, alpha_algo_quality,alpha_miner_plus_quality,heuristic_miner, dfg_precision, process_animate,
                             heuristic_miner_petri)
 
-file_path = '/home/ania/Desktop/trace_clustering/services/clustering/test/result_res10k.csv'
+file_path = '/home/ania/Desktop/trace_clustering/services/clustering/test/result_res10k.mp'
 
 async def main():
 
     #### **************** testing the functions **********
 
-    print(await alpha_miner_plus_quality(file_path, "token based", "token based"))
+    # print(await alpha_algo_quality(file_path, "token based", "token based"))
     # await heuristic_miner(file_path, 0.5 , 0.5,0.9 )
-
+    await alpha_miner_algo(file_path)
     # await process_animate(file_path)
     # print(await dfg_precision(file_path))
     # await heuristic_miner_petri(file_path, "token based", "token based")

@@ -1,6 +1,6 @@
+import logging
 import os
 from http.client import HTTPException
-
 import pm4py
 import subprocess
 from pm4py.algo.discovery.alpha import algorithm as alpha_miner
@@ -11,6 +11,10 @@ from pm4py.visualization.heuristics_net import visualizer as hn_visualizer
 from pm4py.visualization.process_tree import visualizer as pt_visualizer
 from pm4py.objects.conversion.dfg.variants import to_petri_net_invisibles_no_duplicates
 from .utils import read_files, generate_zip, calculate_quality
+
+
+# Configure logging
+logging.basicConfig(level=logging.ERROR)
 
 
 async def alpha_miner_algo(file):
@@ -32,6 +36,9 @@ async def alpha_miner_algo(file):
     return log, net, initial_marking, final_marking, output_path
 
 
+
+
+
 async def alpha_algo_quality(file, fitness_approach, precision_approach):
     """
     Args:
@@ -45,14 +52,14 @@ async def alpha_algo_quality(file, fitness_approach, precision_approach):
     log, net, initial_marking, final_marking, output_path = await alpha_miner_algo(file)
 
     # Calculate the quality of the resulting petri net of alpha miner
-    results , results , json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
+    results, json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
 
     # Writing the pnml file of the petri net
     pm4py.write.write_pnml(net, initial_marking, final_marking, "src/temp/pnml_file.pnml")
 
     # Creating a zip file and saving the png, pnml and quality of the resulting model
-    results , zip_path = generate_zip(output_path, "src/temp/pnml_file.pnml", json_path)
-    return  results , zip_path
+    results, zip_path = generate_zip(output_path, "src/temp/pnml_file.pnml", json_path)
+    return results, zip_path
 
 
 async def alpha_miner_plus(file):
