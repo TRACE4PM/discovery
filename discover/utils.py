@@ -15,10 +15,10 @@ from .models.qual_params import QualityResult
 
 
 async def read_csv(file):
-
+    # read the csv file as dataframe
     dataframe =  pd.read_csv(file, sep=";")
 
-    # renaming the col ending with _id
+    # renaming the columns based on pm4py requirements
     dataframe.rename(columns=lambda x: 'case:concept:name' if x.endswith('_id') else x, inplace=True)
     dataframe.rename(columns=lambda x: 'time:timestamp' if x.endswith('timestamp') else x, inplace=True)
     dataframe.rename(columns={'action': 'concept:name'}, inplace=True)
@@ -52,8 +52,8 @@ def latest_image():
 
 
 def generate_zip(diagram_path, pnml_path, qual_path):
-
     # create a zip file containing the png of the model, its quality and the pnml file
+
     zip_path = "src/temp/Zipped_file.zip"
     with ZipFile(zip_path, 'w') as zip_object:
         # Adding files that need to be zipped
@@ -77,6 +77,16 @@ def generate_zip(diagram_path, pnml_path, qual_path):
 
 
 def calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach):
+    """
+        Calculates the quality of the generated model
+    Args:
+        net,initial_marking, final_marking: petri net parameters
+        fitness_approach, precision_approach: choosing the approach for fitness and precision, token-based or alignement
+
+    Returns:
+
+    """
+
     generalization = generalization_evaluator.apply(log, net, initial_marking, final_marking)
     if fitness_approach == "token based":
         fitness = pm4py.fitness_token_based_replay(log, net, initial_marking, final_marking)
@@ -95,4 +105,4 @@ def calculate_quality(log, net, initial_marking, final_marking, fitness_approach
     with open(json_path, "w") as outfile:
         json.dump(results.json(), outfile)
 
-    return json_path
+    return results , json_path

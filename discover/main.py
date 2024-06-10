@@ -45,14 +45,14 @@ async def alpha_algo_quality(file, fitness_approach, precision_approach):
     log, net, initial_marking, final_marking, output_path = await alpha_miner_algo(file)
 
     # Calculate the quality of the resulting petri net of alpha miner
-    json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
+    results , results , json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
 
     # Writing the pnml file of the petri net
     pm4py.write.write_pnml(net, initial_marking, final_marking, "src/temp/pnml_file.pnml")
 
     # Creating a zip file and saving the png, pnml and quality of the resulting model
-    zip_path = generate_zip(output_path, "src/temp/pnml_file.pnml", json_path)
-    return zip_path
+    results , zip_path = generate_zip(output_path, "src/temp/pnml_file.pnml", json_path)
+    return  results , zip_path
 
 
 async def alpha_miner_plus(file):
@@ -81,12 +81,12 @@ async def alpha_miner_plus_quality(file, fitness_approach, precision_approach):
            zip file: containing a json file of the quality of the model, a png of the petri net and a PNML file
        """
     log, net, initial_marking, final_marking, output_path = await alpha_miner_plus(file)
-    json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
+    results , json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
     pm4py.write.write_pnml(net, initial_marking, final_marking, "src/temp/pnml_file.pnml")
 
-    zip_path = generate_zip(output_path, "src/temp/pnml_file.pnml", json_path)
+    zip_path= generate_zip(output_path, "src/temp/pnml_file.pnml", json_path)
 
-    return zip_path
+    return results , zip_path
 
 
 async def freq_alpha_miner(file):
@@ -144,12 +144,12 @@ async def heuristic_miner_petri(file, fitness_approach,
     output_path = "src/temp/heuristic_petrinet.png"
     diagram_visual.save(gviz, output_path)
 
-    json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
+    results , json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
     pm4py.write.write_pnml(net, initial_marking, final_marking, "src/temp/pnml_file.pnml")
 
-    zip_path = generate_zip(output_path, "src/temp/pnml_file.pnml", json_path)
+    zip_path= generate_zip(output_path, "src/temp/pnml_file.pnml", json_path)
 
-    return zip_path
+    return results , zip_path
 
 
 async def inductive_miner(file, noise_threshold):
@@ -179,12 +179,12 @@ async def inductive_miner_quality(file, noise_threshold, fitness_approach, preci
     """
     log, net, initial_marking, final_marking,output_path = await inductive_miner(file, noise_threshold)
 
-    json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
+    results , json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
     pm4py.write.write_pnml(net, initial_marking, final_marking, "src/temp/pnml_file")
 
-    zip_path = generate_zip(output_path, "src/temp/pnml_file.pnml", json_path)
+    zip_path= generate_zip(output_path, "src/temp/pnml_file.pnml", json_path)
 
-    return zip_path
+    return results , zip_path
 
 
 async def inductive_miner_tree(file):
@@ -233,7 +233,7 @@ async def dfg_precision(file):
     log = await read_files(file)
     dfg, start_activities, end_activities, output_path= await dfg_function(log)
     precision = pm4py.algo.evaluation.precision.dfg.algorithm.apply(log, dfg, start_activities, end_activities)
-    return precision
+    return precision , output_path
 
 
 async def dfg_petri_quality(file, fitness_approach: str = "token based", precision_approach: str = "token based"):
@@ -250,11 +250,11 @@ async def dfg_petri_quality(file, fitness_approach: str = "token based", precisi
                   to_petri_net_invisibles_no_duplicates.Parameters.END_ACTIVITIES: end_activities}
 
     net, initial_marking, final_marking = to_petri_net_invisibles_no_duplicates.apply(dfg, parameters=parameters)
-    json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
+    results , json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
     pm4py.write.write_pnml(net, initial_marking, final_marking, "src/temp/pnml_file")
 
     zip_path = generate_zip("src/temp/directly_follow.png", "src/temp/pnml_file.pnml", json_path)
-    return zip_path
+    return results , zip_path
 
 
 async def dfg_performance(file):
