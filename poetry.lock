@@ -741,30 +741,31 @@ xmp = ["defusedxml"]
 
 [[package]]
 name = "pm4py"
-version = "2.7.8.4"
+version = "2.7.11.10"
 description = "Process mining for Python"
 optional = false
 python-versions = "*"
 files = [
-    {file = "pm4py-2.7.8.4-py3-none-any.whl", hash = "sha256:c6e1935cf8923ab1324ba22b36fb1e7f2efa24de5c035a3b3c3b3c0ed300afc3"},
-    {file = "pm4py-2.7.8.4.tar.gz", hash = "sha256:ca1122f594d6ca925aee653cdd0d40bd5913fd3ce42c418b6d2c28b74cbd5546"},
+    {file = "pm4py-2.7.11.10-py3-none-any.whl", hash = "sha256:e57b82ca8dbe4e03ee83441d2f3dd9d6b1bf77b7bf896fbd09dd08a30a62cf79"},
+    {file = "pm4py-2.7.11.10.tar.gz", hash = "sha256:c94fc8e6b293b7a909fe1f8f8e0b30d155a1444a3d71e98dcfe6e38b057dbf7a"},
 ]
 
 [package.dependencies]
-cvxopt = {version = "*", markers = "python_version < \"3.12\""}
+cvxopt = {version = "*", markers = "python_version < \"3.13\""}
 deprecation = "*"
 graphviz = "*"
 intervaltree = "*"
 lxml = "*"
 matplotlib = "*"
 networkx = "*"
-numpy = "*"
+numpy = "<2"
 pandas = "*"
 pydotplus = "*"
 pytz = "*"
 scipy = "*"
-stringdist = "*"
+setuptools = "*"
 tqdm = "*"
+wheel = "*"
 
 [[package]]
 name = "pydantic"
@@ -965,6 +966,21 @@ doc = ["jupytext", "matplotlib (>2)", "myst-nb", "numpydoc", "pooch", "pydata-sp
 test = ["asv", "gmpy2", "hypothesis", "mpmath", "pooch", "pytest", "pytest-cov", "pytest-timeout", "pytest-xdist", "scikit-umfpack", "threadpoolctl"]
 
 [[package]]
+name = "setuptools"
+version = "70.0.0"
+description = "Easily download, build, install, upgrade, and uninstall Python packages"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "setuptools-70.0.0-py3-none-any.whl", hash = "sha256:54faa7f2e8d2d11bcd2c07bed282eef1046b5c080d1c32add737d7b5817b1ad4"},
+    {file = "setuptools-70.0.0.tar.gz", hash = "sha256:f211a66637b8fa059bb28183da127d4e86396c991a942b028c6650d4319c3fd0"},
+]
+
+[package.extras]
+docs = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "pygments-github-lexers (==0.0.5)", "pyproject-hooks (!=1.1)", "rst.linker (>=1.9)", "sphinx (>=3.5)", "sphinx-favicon", "sphinx-inline-tabs", "sphinx-lint", "sphinx-notfound-page (>=1,<2)", "sphinx-reredirects", "sphinxcontrib-towncrier"]
+testing = ["build[virtualenv] (>=1.0.3)", "filelock (>=3.4.0)", "importlib-metadata", "ini2toml[lite] (>=0.14)", "jaraco.develop (>=7.21)", "jaraco.envs (>=2.2)", "jaraco.path (>=3.2.0)", "mypy (==1.9)", "packaging (>=23.2)", "pip (>=19.1)", "pyproject-hooks (!=1.1)", "pytest (>=6,!=8.1.1)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-home (>=0.5)", "pytest-mypy", "pytest-perf", "pytest-ruff (>=0.2.1)", "pytest-subprocess", "pytest-timeout", "pytest-xdist (>=3)", "tomli", "tomli-w (>=1.0.0)", "virtualenv (>=13.0.0)", "wheel"]
+
+[[package]]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -984,16 +1000,6 @@ python-versions = "*"
 files = [
     {file = "sortedcontainers-2.4.0-py2.py3-none-any.whl", hash = "sha256:a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0"},
     {file = "sortedcontainers-2.4.0.tar.gz", hash = "sha256:25caa5a06cc30b6b83d11423433f65d1f9d76c4c6a0c90e3379eaa43b9bfdb88"},
-]
-
-[[package]]
-name = "stringdist"
-version = "1.0.9"
-description = "This package provides the stringdist module, which includes several functions for calculating string distances. Under the hood, a C extension module is preferentially used for optimal performance, with an automatic fallback to a Python implementation."
-optional = false
-python-versions = "*"
-files = [
-    {file = "StringDist-1.0.9.tar.gz", hash = "sha256:91e6d4a348223db094d029e7e3de9ce89c561738047555dfad60ff5ccb7a5b74"},
 ]
 
 [[package]]
@@ -1056,7 +1062,21 @@ h11 = ">=0.8"
 [package.extras]
 standard = ["colorama (>=0.4)", "httptools (>=0.5.0)", "python-dotenv (>=0.13)", "pyyaml (>=5.1)", "uvloop (>=0.14.0,!=0.15.0,!=0.15.1)", "watchfiles (>=0.13)", "websockets (>=10.4)"]
 
+[[package]]
+name = "wheel"
+version = "0.43.0"
+description = "A built-package format for Python"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "wheel-0.43.0-py3-none-any.whl", hash = "sha256:55c570405f142630c6b9f72fe09d9b67cf1477fcf543ae5b8dcb1f5b7377da81"},
+    {file = "wheel-0.43.0.tar.gz", hash = "sha256:465ef92c69fa5c5da2d1cf8ac40559a8c940886afcef87dcf14b9470862f1d85"},
+]
+
+[package.extras]
+test = ["pytest (>=6.0.0)", "setuptools (>=65)"]
+
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "59ea436e4491858502c6c6383e7e2f1a2c522ec2e368e6a8f0cb41aab28bccd9"
+content-hash = "d07f39cac9f59b4ef27d710d8a557fc78a97b396e522bb935ae3e0e307d0084b"

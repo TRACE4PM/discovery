@@ -6,10 +6,3 @@ class QualityResult(BaseModel):
     Precision: float
     Generalization: float
     Simplicity: float
-
-
-class HeuristicParameters(BaseModel):
-    none = ""
-    Dependency = "Dependency Threshold"
-    And = "And Threshold"
-    LoopTwo = "Loop Two Threshold"

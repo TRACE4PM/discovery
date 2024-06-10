@@ -48,7 +48,7 @@ En ce qui concerne le calcul de la fitness et la précision 2 approches sont pro
 - Token based 
 - Alignemet based 
 
-Ce service implémente également une fonction `process_animate` qui produit une animation du fichier log en utilisant 
+Ce service implémente également une fonct0ion `process_animate` qui produit une animation du fichier log en utilisant 
 la librairie `processanimateR` du packet `BupaR`, il faut donc avoir installé un environnement R et les librairies 
 necessaires. 
 
