@@ -38,7 +38,6 @@ async def alpha_miner_algo(file):
 
 
 
-
 async def alpha_algo_quality(file, fitness_approach, precision_approach):
     """
     Args:
@@ -58,7 +57,7 @@ async def alpha_algo_quality(file, fitness_approach, precision_approach):
     pm4py.write.write_pnml(net, initial_marking, final_marking, "src/temp/pnml_file.pnml")
 
     # Creating a zip file and saving the png, pnml and quality of the resulting model
-    results, zip_path = generate_zip(output_path, "src/temp/pnml_file.pnml", json_path)
+    zip_path = generate_zip(output_path, "src/temp/pnml_file.pnml", json_path)
     return results, zip_path
 
 

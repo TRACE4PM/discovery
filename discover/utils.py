@@ -19,8 +19,8 @@ async def read_csv(file):
     dataframe =  pd.read_csv(file, sep=";")
 
     # renaming the columns based on pm4py requirements
-    dataframe.rename(columns=lambda x: 'case:concept:name' if x.endswith('_id') else x, inplace=True)
     dataframe.rename(columns=lambda x: 'time:timestamp' if x.endswith('timestamp') else x, inplace=True)
+    dataframe.rename(columns={'client_id': 'case:concept:name'}, inplace=True)
     dataframe.rename(columns={'action': 'concept:name'}, inplace=True)
 
     # Convert timestamp column to datetime and handle mixed format
