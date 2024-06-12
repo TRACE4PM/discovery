@@ -14,30 +14,29 @@ from zipfile import ZipFile
 from .models.qual_params import QualityResult
 
 
-async def read_csv(file):
+async def read_csv(file, case_name, concept_name, timestamp, separator):
     # read the csv file as dataframe
-    dataframe =  pd.read_csv(file, sep=";")
-
+    dataframe = pd.read_csv(file, sep=separator)
     # renaming the columns based on pm4py requirements
-    dataframe.rename(columns=lambda x: 'time:timestamp' if x.endswith('timestamp') else x, inplace=True)
-    dataframe.rename(columns={'client_id': 'case:concept:name'}, inplace=True)
-    dataframe.rename(columns={'action': 'concept:name'}, inplace=True)
-
+    dataframe.rename(columns={concept_name: 'concept:name'}, inplace=True)
+    dataframe.rename(columns={case_name:'case:concept:name'}, inplace=True)
+    dataframe.rename(columns={timestamp: 'time:timestamp'}, inplace=True)
     # Convert timestamp column to datetime and handle mixed format
     dataframe['time:timestamp'] = pd.to_datetime(dataframe['time:timestamp'], format='mixed')
 
     return dataframe
 
-async def read_files(file_path):
+
+async def read_files(file_path, case_name, concept_name, timestamp, separator):
     # read the log files depending on its extension
     extension = os.path.splitext(file_path)[1].lower()
     if extension == '.csv':
-        dataframe = await read_csv(file_path)
+        dataframe = await read_csv(file_path, case_name, concept_name, timestamp, separator)
         return dataframe
     elif extension == '.xes':
         log = pm4py.read_xes(file_path)
         return log
-    else :
+    else:
         raise ValueError('Wrong file format')
 
 
@@ -57,11 +56,11 @@ def generate_zip(diagram_path, pnml_path, qual_path):
     zip_path = "src/temp/Zipped_file.zip"
     with ZipFile(zip_path, 'w') as zip_object:
         # Adding files that need to be zipped
-        zip_object.write(pnml_path,arcname='pnml_file.pnml')
+        zip_object.write(pnml_path, arcname='pnml_file.pnml')
 
         name_png = os.path.split(diagram_path)
 
-        zip_object.write(diagram_path, arcname = name_png[1])
+        zip_object.write(diagram_path, arcname=name_png[1])
         zip_object.write(qual_path, arcname="algo_quality.json")
 
     # Remove the files from temp folder
@@ -99,10 +98,10 @@ def calculate_quality(log, net, initial_marking, final_marking, fitness_approach
 
     simplicity = simplicity_evaluator.apply(net)
 
-    results = QualityResult(Fitness=fitness, Precision= precision, Simplicity= simplicity,Generalization= generalization)
+    results = QualityResult(Fitness=fitness, Precision=precision, Simplicity=simplicity, Generalization=generalization)
 
     json_path = "src/temp/quality.json"
     with open(json_path, "w") as outfile:
         json.dump(results.json(), outfile)
 
-    return results , json_path
+    return results, json_path

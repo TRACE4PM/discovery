@@ -12,21 +12,24 @@ from pm4py.visualization.process_tree import visualizer as pt_visualizer
 from pm4py.objects.conversion.dfg.variants import to_petri_net_invisibles_no_duplicates
 from .utils import read_files, generate_zip, calculate_quality
 
-
 # Configure logging
 logging.basicConfig(level=logging.ERROR)
 
 
-async def alpha_miner_algo(file):
+async def alpha_miner_algo(file, case_name, concept_name, timestamp, separator):
     """
       Applying Alpha Miner algorithm on a log file and saving the model in a png file
     Args:
+        separator:
+        timestamp:
+        concept_name:
+        case_name:
         file: csv or xes log file
     Returns:
         petri net, initial marking and final marking
        """
 
-    log = await read_files(file)
+    log = await read_files(file, case_name, concept_name, timestamp, separator)
     # applying alpha miner of the log file
     net, initial_marking, final_marking = alpha_miner.apply(log)
     gviz = pn_visualizer.apply(net, initial_marking, final_marking)
@@ -36,9 +39,7 @@ async def alpha_miner_algo(file):
     return log, net, initial_marking, final_marking, output_path
 
 
-
-
-async def alpha_algo_quality(file, fitness_approach, precision_approach):
+async def alpha_algo_quality(file, case_name, concept_name, timestamp, separator, fitness_approach, precision_approach):
     """
     Args:
         file: csv or xes log file
@@ -48,10 +49,11 @@ async def alpha_algo_quality(file, fitness_approach, precision_approach):
         zip file: containing a json file of the quality of the model, a png of the petri net and a PNML file
     """
     # applying alpha miner algorithm
-    log, net, initial_marking, final_marking, output_path = await alpha_miner_algo(file)
+    log, net, initial_marking, final_marking, output_path = await alpha_miner_algo(file, case_name, concept_name, timestamp, separator)
 
     # Calculate the quality of the resulting petri net of alpha miner
-    results, json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
+    results, json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach,
+                                           precision_approach)
 
     # Writing the pnml file of the petri net
     pm4py.write.write_pnml(net, initial_marking, final_marking, "src/temp/pnml_file.pnml")
@@ -61,12 +63,12 @@ async def alpha_algo_quality(file, fitness_approach, precision_approach):
     return results, zip_path
 
 
-async def alpha_miner_plus(file):
+async def alpha_miner_plus(file, case_name, concept_name, timestamp, separator):
     """
       Alpha miner plus :  able to discover more complex connections, handle loops and connections effectively
 
     """
-    log = await read_files(file)
+    log = await read_files(file, case_name, concept_name, timestamp, separator)
     net, initial_marking, final_marking = alpha_miner.apply(log, variant=variants.plus)
     gviz = pn_visualizer.apply(net, initial_marking, final_marking)
 
@@ -76,7 +78,7 @@ async def alpha_miner_plus(file):
     return log, net, initial_marking, final_marking, output_path
 
 
-async def alpha_miner_plus_quality(file, fitness_approach, precision_approach):
+async def alpha_miner_plus_quality(file, case_name, concept_name, timestamp, separator, fitness_approach, precision_approach):
     """
     Calculates the quality of the Alpha miner plus model
        Args:
@@ -86,20 +88,21 @@ async def alpha_miner_plus_quality(file, fitness_approach, precision_approach):
        Returns:
            zip file: containing a json file of the quality of the model, a png of the petri net and a PNML file
        """
-    log, net, initial_marking, final_marking, output_path = await alpha_miner_plus(file)
-    results , json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
+    log, net, initial_marking, final_marking, output_path = await alpha_miner_plus(file, case_name, concept_name, timestamp, separator)
+    results, json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach,
+                                           precision_approach)
     pm4py.write.write_pnml(net, initial_marking, final_marking, "src/temp/pnml_file.pnml")
 
-    zip_path= generate_zip(output_path, "src/temp/pnml_file.pnml", json_path)
+    zip_path = generate_zip(output_path, "src/temp/pnml_file.pnml", json_path)
 
-    return results , zip_path
+    return results, zip_path
 
 
-async def freq_alpha_miner(file):
+async def freq_alpha_miner(file, case_name, concept_name, timestamp, separator):
     """
         Creates an Alpha miner petri net with the frequency of the activities and saves it in a png file
     """
-    log = await read_files(file)
+    log = await read_files(file, case_name, concept_name, timestamp, separator)
 
     net, initial_marking, final_marking = alpha_miner.apply(log)
     parameters = {pn_visualizer.Variants.FREQUENCY.value.Parameters.FORMAT: "png"}
@@ -113,7 +116,7 @@ async def freq_alpha_miner(file):
     return output_path
 
 
-async def heuristic_miner(file, dependency_threshold, and_threshold, loop_two_threshold):
+async def heuristic_miner(file, case_name, concept_name, timestamp, separator, dependency_threshold, and_threshold, loop_two_threshold):
     """
     Args:
         file: csv or xes log file
@@ -123,7 +126,7 @@ async def heuristic_miner(file, dependency_threshold, and_threshold, loop_two_th
 
     Returns: a png file of the heuristic net
     """
-    log = await read_files(file)
+    log = await read_files(file, case_name, concept_name, timestamp, separator)
     heuristic_net = pm4py.discover_heuristics_net(log, activity_key='concept:name',
                                                   case_id_key='case:concept:name', timestamp_key='time:timestamp',
                                                   dependency_threshold=dependency_threshold,
@@ -135,14 +138,14 @@ async def heuristic_miner(file, dependency_threshold, and_threshold, loop_two_th
     return output_path
 
 
-async def heuristic_miner_petri(file, fitness_approach,
+async def heuristic_miner_petri(file, case_name, concept_name, timestamp, separator, fitness_approach,
                                 precision_approach):
     """
         Generate a petri net from a heuristic net to calculate the quality of the model
         Returns:
             A zip file containing the petri net, pnml file and the quality of the model
     """
-    log = await read_files(file)
+    log = await read_files(file, case_name, concept_name, timestamp, separator)
 
     # generate the heuristic petri net and saving it in a png file
     net, initial_marking, final_marking = pm4py.discover_petri_net_heuristics(log)
@@ -150,20 +153,21 @@ async def heuristic_miner_petri(file, fitness_approach,
     output_path = "src/temp/heuristic_petrinet.png"
     diagram_visual.save(gviz, output_path)
 
-    results , json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
+    results, json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach,
+                                           precision_approach)
     pm4py.write.write_pnml(net, initial_marking, final_marking, "src/temp/pnml_file.pnml")
 
-    zip_path= generate_zip(output_path, "src/temp/pnml_file.pnml", json_path)
+    zip_path = generate_zip(output_path, "src/temp/pnml_file.pnml", json_path)
 
-    return results , zip_path
+    return results, zip_path
 
 
-async def inductive_miner(file, noise_threshold):
+async def inductive_miner(file, case_name, concept_name, timestamp, separator, noise_threshold):
     """
         noise_threshold: a float value, filters noisy behavior, activities that are infrequent and outliers
             default value is 0
     """
-    log = await read_files(file)
+    log = await read_files(file, case_name, concept_name, timestamp, separator)
     net, initial_marking, final_marking = pm4py.discover_petri_net_inductive(log, noise_threshold)
     gviz = pn_visualizer.apply(net, initial_marking, final_marking)
     output_path = "src/temp/inductive_petrinet.png"
@@ -171,7 +175,7 @@ async def inductive_miner(file, noise_threshold):
     return log, net, initial_marking, final_marking, output_path
 
 
-async def inductive_miner_quality(file, noise_threshold, fitness_approach, precision_approach):
+async def inductive_miner_quality(file, case_name, concept_name, timestamp, separator, noise_threshold, fitness_approach, precision_approach):
     """
     Args:
         file: csv/xes log file
@@ -183,21 +187,22 @@ async def inductive_miner_quality(file, noise_threshold, fitness_approach, preci
         zip file: containing a json file of the quality of the model, a png of the petri net and a PNML file
 
     """
-    log, net, initial_marking, final_marking,output_path = await inductive_miner(file, noise_threshold)
+    log, net, initial_marking, final_marking, output_path = await inductive_miner(file, case_name, concept_name, timestamp, separator, noise_threshold)
 
-    results , json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
+    results, json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach,
+                                           precision_approach)
     pm4py.write.write_pnml(net, initial_marking, final_marking, "src/temp/pnml_file")
 
-    zip_path= generate_zip(output_path, "src/temp/pnml_file.pnml", json_path)
+    zip_path = generate_zip(output_path, "src/temp/pnml_file.pnml", json_path)
 
-    return results , zip_path
+    return results, zip_path
 
 
-async def inductive_miner_tree(file):
+async def inductive_miner_tree(file, case_name, concept_name, timestamp, separator):
     """
         Creates and inductive process tree and saves it in a png file
     """
-    log = await read_files(file)
+    log = await read_files(file, case_name, concept_name, timestamp, separator)
     tree = pm4py.discover_process_tree_inductive(log)
     pm4py.view_process_tree(tree)
     gviz = pt_visualizer.apply(tree)
@@ -206,11 +211,11 @@ async def inductive_miner_tree(file):
     return output_path
 
 
-async def bpmn_model(file):
+async def bpmn_model(file, case_name, concept_name, timestamp, separator):
     """
        Creates and inductive BPMN model and saves it in a png file
     """
-    log = await read_files(file)
+    log = await read_files(file, case_name, concept_name, timestamp, separator )
     bpmn_graph = pm4py.discover_bpmn_inductive(log)
     output_path = "src/temp/bpmn_model.png"
     pm4py.save_vis_bpmn(bpmn_graph, output_path)
@@ -223,52 +228,51 @@ async def dfg_function(log):
     Returns:
         A tuple with the directly-following activities
     """
-    dfg, start_activities, end_activities = pm4py.discover_dfg(log, case_id_key='case:concept:name',
-                                                               activity_key='concept:name',
-                                                               timestamp_key='time:timestamp')
+    dfg, start_activities, end_activities = pm4py.discover_dfg(log)
     output_path = "src/temp/directly_follow.png"
     pm4py.save_vis_dfg(dfg, start_activities, end_activities, output_path)
 
     return dfg, start_activities, end_activities, output_path
 
 
-async def dfg_precision(file):
+async def dfg_precision(file, case_name, concept_name, timestamp, separator):
     """
         Returns : the precision of the Directly Follow Graph
     """
-    log = await read_files(file)
-    dfg, start_activities, end_activities, output_path= await dfg_function(log)
+    log = await read_files(file, case_name, concept_name, timestamp, separator)
+    dfg, start_activities, end_activities, output_path = await dfg_function(log)
     precision = pm4py.algo.evaluation.precision.dfg.algorithm.apply(log, dfg, start_activities, end_activities)
-    return precision , output_path
+    return precision, output_path
 
 
-async def dfg_petri_quality(file, fitness_approach: str = "token based", precision_approach: str = "token based"):
+async def dfg_petri_quality(file, case_name, concept_name, timestamp, separator, fitness_approach: str = "token based", precision_approach: str = "token based"):
     """
      Converts the dfg to a petri net to calculate the quality of the resulting model
     Returns:
         zip file: containing a json file of the quality of the model, a png of the petri net and a PNML file
     """
 
-    log = await read_files(file)
+    log = await read_files(file, case_name, concept_name, timestamp, separator)
 
-    dfg, start_activities, end_activities, output_path  = await dfg_function(log)
+    dfg, start_activities, end_activities, output_path = await dfg_function(log, case_name, concept_name, timestamp, separator)
     parameters = {to_petri_net_invisibles_no_duplicates.Parameters.START_ACTIVITIES: start_activities,
                   to_petri_net_invisibles_no_duplicates.Parameters.END_ACTIVITIES: end_activities}
 
     net, initial_marking, final_marking = to_petri_net_invisibles_no_duplicates.apply(dfg, parameters=parameters)
-    results , json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach)
+    results, json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach,
+                                           precision_approach)
     pm4py.write.write_pnml(net, initial_marking, final_marking, "src/temp/pnml_file")
 
     zip_path = generate_zip("src/temp/directly_follow.png", "src/temp/pnml_file.pnml", json_path)
-    return results , zip_path
+    return results, zip_path
 
 
-async def dfg_performance(file):
+async def dfg_performance(file, case_name, concept_name, timestamp, separator):
     """
         Discovers a performance directly-follows graph from an event log and saves it in a png file
 
     """
-    log = await read_files(file)
+    log = await read_files(file, case_name, concept_name, timestamp, separator)
     performance_dfg, start_activities, end_activities = pm4py.discover_performance_dfg(log)
     output_path = "src/temp/directly_follow_perfo.png"
     pm4py.save_vis_performance_dfg(performance_dfg, start_activities, end_activities,
