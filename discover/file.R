@@ -1,5 +1,6 @@
  options(repos = c(CRAN = "https://cran.r-project.org"))
 
+# packages to install in case it doesn't work without the dependencies
 
 #  install.packages("magrittr")
 #  install.packages("rmarkdown")
@@ -13,10 +14,10 @@
 #  install.packages("DiagrammeR")
 # install.packages("processmapR")
 # install.packages("processanimateR")
-#    install.packages("dplyr")
-#  install.packages("igraph")
-#      install.packages("xesreadR")
-#     install.packages("processanimateR")
+# install.packages("dplyr")
+# install.packages("igraph")
+# install.packages("xesreadR")
+# install.packages("processanimateR")
 
 library(dplyr)
 library(bupaR)
@@ -62,9 +63,9 @@ animate_csv <- function(csv_path) {
         scale = "ordinal",
         range = RColorBrewer::brewer.pal(7, "Paired"))))
 
-    htmlwidgets::saveWidget(animation, file = "process_animation.html", selfcontained = FALSE)
+    htmlwidgets::saveWidget(animation, file = "src/temp/process_animation.html", selfcontained = FALSE)
 
-     browseURL("process_animation.html")
+     browseURL("src/temp/process_animation.html")
  }
 
 
@@ -83,8 +84,8 @@ animate_xes <- function(xes_path) {
                          scale = "ordinal",
                          range = RColorBrewer::brewer.pal(7, "Paired"))))
 
-htmlwidgets::saveWidget(animation, file = "process_animation.html", selfcontained = FALSE)
-browseURL("process_animation.html")
+htmlwidgets::saveWidget(animation, file = "src/temp/process_animation.html", selfcontained = FALSE)
+browseURL("src/temp/process_animation.html")
 
 }
 

@@ -204,7 +204,6 @@ async def inductive_miner_tree(file, case_name, concept_name, timestamp, separat
     """
     log = await read_files(file, case_name, concept_name, timestamp, separator)
     tree = pm4py.discover_process_tree_inductive(log)
-    pm4py.view_process_tree(tree)
     gviz = pt_visualizer.apply(tree)
     output_path = "src/temp/inductive_processTree.png"
     pt_visualizer.save(gviz, output_path)
@@ -245,16 +244,16 @@ async def dfg_precision(file, case_name, concept_name, timestamp, separator):
     return precision, output_path
 
 
-async def dfg_petri_quality(file, case_name, concept_name, timestamp, separator, fitness_approach: str = "token based", precision_approach: str = "token based"):
+async def dfg_petri_quality(file, case_name, concept_name, timestamp, separator, fitness_approach: str = "token based",
+                            precision_approach: str = "token based"):
     """
      Converts the dfg to a petri net to calculate the quality of the resulting model
     Returns:
         zip file: containing a json file of the quality of the model, a png of the petri net and a PNML file
     """
-
     log = await read_files(file, case_name, concept_name, timestamp, separator)
 
-    dfg, start_activities, end_activities, output_path = await dfg_function(log, case_name, concept_name, timestamp, separator)
+    dfg, start_activities, end_activities, output_path = await dfg_function(log)
     parameters = {to_petri_net_invisibles_no_duplicates.Parameters.START_ACTIVITIES: start_activities,
                   to_petri_net_invisibles_no_duplicates.Parameters.END_ACTIVITIES: end_activities}
 
