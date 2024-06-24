@@ -32,9 +32,6 @@ animate_csv <- function(csv_path) {
         stop("Wrong file format")
     }
 
-#     log$X.timestamp <- as.POSIXct(log$X.timestamp, format = "%Y-%m-%d %H:%M:%OS")
-#     log$X.timestamp <- as.POSIXct(sub("\\+.*$", "", log$timestamp), format = "%Y-%m-%dT%H:%M:%S")
-
     log$X.timestamp <- anytime(log$timestamp)
 
     for (col_name in colnames(log)) {
@@ -50,7 +47,6 @@ animate_csv <- function(csv_path) {
         group_by(case_id) %>%
         mutate(lifecycle_id = row_number())
 
-    # Generate a resource_id based on the 'action' column
     log <- log %>%
         mutate(resource_id = as.factor(action))
 
@@ -66,39 +62,32 @@ animate_csv <- function(csv_path) {
     htmlwidgets::saveWidget(animation, file = "src/temp/process_animation.html", selfcontained = FALSE)
 
      browseURL("src/temp/process_animation.html")
- }
-
-
-# animating xes files ::
+}
 
 animate_xes <- function(xes_path) {
-
     if (endsWith(xes_path, ".xes")) {
         log <- read_xes(xes_path)
     } else {
         stop("Wrong file format")
     }
-  animation <- animate_process(log,
+
+    animation <- animate_process(log,
                          mode = "relative", jitter = 10, legend = "color",
                          mapping = token_aes(color = token_scale("users",
                          scale = "ordinal",
                          range = RColorBrewer::brewer.pal(7, "Paired"))))
 
-htmlwidgets::saveWidget(animation, file = "src/temp/process_animation.html", selfcontained = FALSE)
-browseURL("src/temp/process_animation.html")
-
+    htmlwidgets::saveWidget(animation, file = "src/temp/process_animation.html", selfcontained = FALSE)
+    browseURL("src/temp/process_animation.html")
 }
-
 
 args <- commandArgs(trailingOnly = TRUE)
 file_path <- args[1]
 
 if (endsWith(file_path, ".csv")) {
-        animate_csv(file_path)
-    } else if (endsWith(file_path, ".xes"))  {
-       animate_xes(file_path)
-    }
-    else {
-        return "You provided the wrong file format"
-    }
-
+    animate_csv(file_path)
+} else if (endsWith(file_path, ".xes")) {
+    animate_xes(file_path)
+} else {
+    stop("You provided the wrong file format")
+}
