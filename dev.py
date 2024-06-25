@@ -3,8 +3,8 @@ from discover.main import ( alpha_miner_algo, alpha_algo_quality,alpha_miner_plu
                             process_animate, inductive_miner_quality,
                             heuristic_miner_petri, inductive_miner, dfg_petri_quality, inductive_miner_tree)
 
-# file_path = '/home/ania/Desktop/test/trace based/file/cluster_log_3.csv'
-file_path = '/home/ania/Desktop/test/fss/fss-99-2/files/Cluster2_Logs.csv'
+file_path = '/home/ania/Desktop/test/trace based/files/cluster_log_2.csv'
+# file_path = '/home/ania/Desktop/test/fss/fss-99-2/files/Cluster2_Logs.csv'
 
 async def main():
 
@@ -19,8 +19,8 @@ async def main():
     # print(await inductive_miner_quality(file_path, 'client_id', 'action', 'timestamp', ";", 1, "token based","token based"))
     # print(await dfg_petri_quality(file_path, 'client_id', 'action', 'timestamp', ";","token based", "token based" ))
     # print(await dfg_petri_quality(file_path, 'client_id', 'action', 'timestamp', ";","token based", "token based"))
-
-    await process_animate(file_path)
+    print(await heuristic_miner_petri(file_path,'client_id', 'action', 'timestamp', ";" , 0.5, 0.65,0.5, "token based","token based"))
+    # await process_animate(file_path)
 
 if __name__ == "__main__":
     asyncio.run(main())
