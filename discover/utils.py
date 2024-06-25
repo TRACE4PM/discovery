@@ -7,11 +7,12 @@ import pm4py
 import json
 from pm4py.algo.evaluation.generalization import algorithm as generalization_evaluator
 from pm4py.algo.evaluation.simplicity import algorithm as simplicity_evaluator
-
 from pm4py.objects.conversion.log.variants import to_event_log
-
 from zipfile import ZipFile
 from .models.qual_params import QualityResult
+import time
+import logging
+import concurrent.futures
 
 
 async def read_csv(file, case_name, concept_name, timestamp, separator):
@@ -75,6 +76,8 @@ def generate_zip(diagram_path, pnml_path, qual_path):
         return "ZIP file not created"
 
 
+logger = logging.getLogger(__name__)
+
 def calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach):
     """
         Calculates the quality of the generated model
@@ -85,23 +88,41 @@ def calculate_quality(log, net, initial_marking, final_marking, fitness_approach
     Returns:
 
     """
+    start_time = time.time()
 
+    generalization_start = time.time()
     generalization = generalization_evaluator.apply(log, net, initial_marking, final_marking)
+    logger.info(f"Generalization calculation took {time.time() - generalization_start:.2f} seconds")
+
+    fitness_start = time.time()
     if fitness_approach == "token based":
         fitness = pm4py.fitness_token_based_replay(log, net, initial_marking, final_marking)
     else:
         fitness = pm4py.fitness_alignments(log, net, initial_marking, final_marking)
-    if precision_approach == "token based":
-        precision = pm4py.precision_token_based_replay(log, net, initial_marking, final_marking)
-    else:
-        precision = pm4py.precision_alignments(log, net, initial_marking, final_marking)
+    logger.info(f"Fitness calculation took {time.time() - fitness_start:.2f} seconds")
 
+    simplicity_start = time.time()
     simplicity = simplicity_evaluator.apply(net)
+    logger.info(f"Simplicity calculation took {time.time() - simplicity_start:.2f} seconds")
 
-    results = QualityResult(Fitness=fitness, Precision=precision, Simplicity=simplicity, Generalization=generalization)
+    precision_start = time.time()
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        if precision_approach == "token based":
+            future_precision = executor.submit(pm4py.precision_token_based_replay, log, net, initial_marking,
+                                               final_marking)
+        else:
+            future_precision = executor.submit(pm4py.precision_alignments, log, net, initial_marking, final_marking)
+        precision = future_precision.result()
+    logger.info(f"Precision calculation took {time.time() - precision_start:.2f} seconds")
+
+
+    results = QualityResult(Fitness=fitness, Precision= precision, Simplicity=simplicity, Generalization=generalization)
 
     json_path = "src/temp/quality.json"
+    json_write_start = time.time()
     with open(json_path, "w") as outfile:
         json.dump(results.json(), outfile)
+    logger.info(f"JSON write took {time.time() - json_write_start:.2f} seconds")
 
+    logger.info(f"Total calculation took {time.time() - start_time:.2f} seconds")
     return results, json_path
