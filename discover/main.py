@@ -11,9 +11,12 @@ from pm4py.visualization.heuristics_net import visualizer as hn_visualizer
 from pm4py.visualization.process_tree import visualizer as pt_visualizer
 from pm4py.objects.conversion.dfg.variants import to_petri_net_invisibles_no_duplicates
 from .utils import read_files, generate_zip, calculate_quality
+import time
+import logging
 
-# Configure logging
-logging.basicConfig(level=logging.ERROR)
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 async def alpha_miner_algo(file, case_name, concept_name, timestamp, separator):
@@ -146,20 +149,25 @@ async def heuristic_miner_petri(file, case_name, concept_name, timestamp, separa
         Returns:
             A zip file containing the petri net, pnml file and the quality of the model
     """
+    start_time = time.time()
     log = await read_files(file, case_name, concept_name, timestamp, separator)
+    logger.info(f"Files read in {time.time() - start_time:.2f} seconds")
 
-    # generate the heuristic petri net and saving it in a png file
     net, initial_marking, final_marking = pm4py.discover_petri_net_heuristics(log)
+    logger.info(f"Petri net discovered in {time.time() - start_time:.2f} seconds")
+
     gviz = pn_visualizer.apply(net, initial_marking, final_marking)
     output_path = "src/temp/heuristic_petrinet.png"
     diagram_visual.save(gviz, output_path)
+    logger.info(f"Visualization saved in {time.time() - start_time:.2f} seconds")
 
     results, json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach,
                                            precision_approach)
     pm4py.write.write_pnml(net, initial_marking, final_marking, "src/temp/pnml_file.pnml")
+    logger.info(f"PNML file written in {time.time() - start_time:.2f} seconds")
 
     zip_path = generate_zip(output_path, "src/temp/pnml_file.pnml", json_path)
-
+    logger.info(f"ZIP file created in {time.time() - start_time:.2f} seconds")
     return results, zip_path
 
 
