@@ -35,7 +35,7 @@ animate_csv <- function(csv_path) {
     log$X.timestamp <- anytime(log$timestamp)
 
     for (col_name in colnames(log)) {
-        if (endsWith(col_name, "_id")) {
+        if (endsWith(col_name, "client_id")) {
             colnames(log)[colnames(log) == col_name] <- "case_id"
         }
     }

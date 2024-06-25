@@ -16,18 +16,6 @@ import concurrent.futures
 import sys
 
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler(sys.stdout)
-    ]
-)
-
-
-logger = logging.getLogger(__name__)
-
-
 async def read_csv(file, case_name, concept_name, timestamp, separator):
     # read the csv file as dataframe
     dataframe = pd.read_csv(file, sep=separator)
@@ -103,8 +91,6 @@ def calculate_quality(log, net, initial_marking, final_marking, fitness_approach
 
     generalization_start = time.time()
     generalization = generalization_evaluator.apply(log, net, initial_marking, final_marking)
-    logger.info(f"Generalization calculation took {time.time() - generalization_start:.2f} seconds")
-
 
     fitness_start = time.time()
     with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -113,11 +99,9 @@ def calculate_quality(log, net, initial_marking, final_marking, fitness_approach
         else:
             future_fitness = executor.submit(pm4py.fitness_alignments, log, net, initial_marking, final_marking)
         fitness = future_fitness.result()
-    logger.info(f"Fitness calculation took {time.time() - fitness_start:.2f} seconds")
 
     simplicity_start = time.time()
     simplicity = simplicity_evaluator.apply(net)
-    logger.info(f"Simplicity calculation took {time.time() - simplicity_start:.2f} seconds")
 
     precision_start = time.time()
     with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -127,7 +111,6 @@ def calculate_quality(log, net, initial_marking, final_marking, fitness_approach
         else:
             future_precision = executor.submit(pm4py.precision_alignments, log, net, initial_marking, final_marking)
         precision = future_precision.result()
-    logger.info(f"Precision calculation took {time.time() - precision_start:.2f} seconds")
 
     results = QualityResult(Fitness=fitness, Precision= precision, Simplicity=simplicity, Generalization=generalization)
 
@@ -135,7 +118,5 @@ def calculate_quality(log, net, initial_marking, final_marking, fitness_approach
     json_write_start = time.time()
     with open(json_path, "w") as outfile:
         json.dump(results.json(), outfile)
-    logger.info(f"JSON write took {time.time() - json_write_start:.2f} seconds")
 
-    logger.info(f"Total calculation took {time.time() - start_time:.2f} seconds")
     return results, json_path

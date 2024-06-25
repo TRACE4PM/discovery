@@ -20,8 +20,8 @@ async def main():
     # print(await inductive_miner_quality(file_path, 'client_id', 'action', 'timestamp', ";", 1, "token based","token based"))
     # print(await dfg_petri_quality(file_path, 'client_id', 'action', 'timestamp', ";","token based", "token based" ))
     # print(await dfg_petri_quality(file_path, 'client_id', 'action', 'timestamp', ";","token based", "token based"))
-    print(await heuristic_miner_petri(file_path,'client_id', 'action', 'timestamp', ";" , "token based","token based"))
-    # await process_animate(file_path)
+    # print(await heuristic_miner_petri(file_path,'client_id', 'action', 'timestamp', ";" , "token based","token based"))
+    await process_animate(file_path, 'client_id', 'action', 'timestamp')
 
 if __name__ == "__main__":
     asyncio.run(main())

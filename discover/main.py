@@ -149,25 +149,19 @@ async def heuristic_miner_petri(file, case_name, concept_name, timestamp, separa
         Returns:
             A zip file containing the petri net, pnml file and the quality of the model
     """
-    start_time = time.time()
     log = await read_files(file, case_name, concept_name, timestamp, separator)
-    logger.info(f"Files read in {time.time() - start_time:.2f} seconds")
 
     net, initial_marking, final_marking = pm4py.discover_petri_net_heuristics(log)
-    logger.info(f"Petri net discovered in {time.time() - start_time:.2f} seconds")
 
     gviz = pn_visualizer.apply(net, initial_marking, final_marking)
     output_path = "src/temp/heuristic_petrinet.png"
     diagram_visual.save(gviz, output_path)
-    logger.info(f"Visualization saved in {time.time() - start_time:.2f} seconds")
 
     results, json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach,
                                            precision_approach)
     pm4py.write.write_pnml(net, initial_marking, final_marking, "src/temp/pnml_file.pnml")
-    logger.info(f"PNML file written in {time.time() - start_time:.2f} seconds")
 
     zip_path = generate_zip(output_path, "src/temp/pnml_file.pnml", json_path)
-    logger.info(f"ZIP file created in {time.time() - start_time:.2f} seconds")
     return results, zip_path
 
 
@@ -288,12 +282,24 @@ async def dfg_performance(file, case_name, concept_name, timestamp, separator):
     return output_path
 
 
-async def process_animate(file_path):
+async def process_animate(file_path,case_id, action,timestamp):
     """
       Opens an html page showing an animation of the DFG model using processanimateR library
 
     """
     # Call the R function with the file path
     r_script_path = os.path.join(os.path.dirname(__file__), "file.R")
-    res = subprocess.call(["Rscript", r_script_path, file_path])
-    return res
+    res = subprocess.call(["Rscript", r_script_path, file_path,case_id, action,timestamp])
+    if res != 0:
+        raise HTTPException(status_code=500, detail="R script execution failed")
+
+    html_file_path = "src/temp/process_animation.html"
+
+    if not os.path.exists(html_file_path):
+        raise HTTPException(status_code=404, detail="HTML file not found")
+
+    # Read and return the HTML content
+    with open(html_file_path, 'r') as file:
+        html_content = file.read()
+
+    return html_content
