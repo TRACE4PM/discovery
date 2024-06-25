@@ -282,14 +282,14 @@ async def dfg_performance(file, case_name, concept_name, timestamp, separator):
     return output_path
 
 
-async def process_animate(file_path,case_id, action,timestamp):
+async def process_animate(file_path):
     """
       Opens an html page showing an animation of the DFG model using processanimateR library
 
     """
     # Call the R function with the file path
     r_script_path = os.path.join(os.path.dirname(__file__), "file.R")
-    res = subprocess.call(["Rscript", r_script_path, file_path,case_id, action,timestamp])
+    res = subprocess.call(["Rscript", r_script_path, file_path])
     if res != 0:
         raise HTTPException(status_code=500, detail="R script execution failed")
 
