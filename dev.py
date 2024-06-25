@@ -4,8 +4,8 @@ from discover.main import ( alpha_miner_algo, alpha_algo_quality,alpha_miner_plu
                             heuristic_miner_petri, inductive_miner, dfg_petri_quality, inductive_miner_tree)
 
 # file_path = '/home/ania/Desktop/test/trace based/files/cluster_log_2.csv'
-file_path = "/home/ania/Downloads/test.csv"
-# file_path = '/home/ania/Desktop/test/fss/fss-99-2/files/Cluster2_Logs.csv'
+# file_path = "/home/ania/Downloads/test.csv"
+file_path = '/home/ania/Desktop/trace_clustering/services/clustering/temp/logs/cluster_log_1.csv'
 
 async def main():
 

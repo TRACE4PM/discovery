@@ -13,6 +13,19 @@ from .models.qual_params import QualityResult
 import time
 import logging
 import concurrent.futures
+import sys
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+
+
+logger = logging.getLogger(__name__)
 
 
 async def read_csv(file, case_name, concept_name, timestamp, separator):
@@ -76,8 +89,6 @@ def generate_zip(diagram_path, pnml_path, qual_path):
         return "ZIP file not created"
 
 
-logger = logging.getLogger(__name__)
-
 def calculate_quality(log, net, initial_marking, final_marking, fitness_approach, precision_approach):
     """
         Calculates the quality of the generated model
@@ -94,11 +105,14 @@ def calculate_quality(log, net, initial_marking, final_marking, fitness_approach
     generalization = generalization_evaluator.apply(log, net, initial_marking, final_marking)
     logger.info(f"Generalization calculation took {time.time() - generalization_start:.2f} seconds")
 
+
     fitness_start = time.time()
-    if fitness_approach == "token based":
-        fitness = pm4py.fitness_token_based_replay(log, net, initial_marking, final_marking)
-    else:
-        fitness = pm4py.fitness_alignments(log, net, initial_marking, final_marking)
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        if fitness_approach == "token based":
+            future_fitness = executor.submit(pm4py.fitness_token_based_replay, log, net, initial_marking, final_marking)
+        else:
+            future_fitness = executor.submit(pm4py.fitness_alignments, log, net, initial_marking, final_marking)
+        fitness = future_fitness.result()
     logger.info(f"Fitness calculation took {time.time() - fitness_start:.2f} seconds")
 
     simplicity_start = time.time()
@@ -114,7 +128,6 @@ def calculate_quality(log, net, initial_marking, final_marking, fitness_approach
             future_precision = executor.submit(pm4py.precision_alignments, log, net, initial_marking, final_marking)
         precision = future_precision.result()
     logger.info(f"Precision calculation took {time.time() - precision_start:.2f} seconds")
-
 
     results = QualityResult(Fitness=fitness, Precision= precision, Simplicity=simplicity, Generalization=generalization)
 
