@@ -61,7 +61,7 @@ animate_csv <- function(csv_path) {
 
     htmlwidgets::saveWidget(animation, file = "src/temp/process_animation.html", selfcontained = FALSE)
 
-     browseURL("src/temp/process_animation.html")
+#      browseURL("src/temp/process_animation.html")
 }
 
 animate_xes <- function(xes_path) {
@@ -78,7 +78,7 @@ animate_xes <- function(xes_path) {
                          range = RColorBrewer::brewer.pal(7, "Paired"))))
 
     htmlwidgets::saveWidget(animation, file = "src/temp/process_animation.html", selfcontained = FALSE)
-    browseURL("src/temp/process_animation.html")
+#     browseURL("src/temp/process_animation.html")
 }
 
 args <- commandArgs(trailingOnly = TRUE)

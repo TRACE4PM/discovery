@@ -21,7 +21,7 @@ async def main():
     # print(await dfg_petri_quality(file_path, 'client_id', 'action', 'timestamp', ";","token based", "token based" ))
     # print(await dfg_petri_quality(file_path, 'client_id', 'action', 'timestamp', ";","token based", "token based"))
     # print(await heuristic_miner_petri(file_path,'client_id', 'action', 'timestamp', ";" , "token based","token based"))
-    await process_animate(file_path, 'client_id', 'action', 'timestamp')
+    print(await process_animate(file_path, 'client_id', 'action', 'timestamp'))
 
 if __name__ == "__main__":
     asyncio.run(main())
