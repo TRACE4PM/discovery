@@ -139,7 +139,6 @@ async def heuristic_miner(file, case_name, concept_name, timestamp, separator, d
 
 
 async def heuristic_miner_petri(file, case_name, concept_name, timestamp, separator,
-                                dependency_threshold, and_threshold, loop_two_threshold,
                                 fitness_approach,
                                 precision_approach):
     """
@@ -150,9 +149,7 @@ async def heuristic_miner_petri(file, case_name, concept_name, timestamp, separa
     log = await read_files(file, case_name, concept_name, timestamp, separator)
 
     # generate the heuristic petri net and saving it in a png file
-    net, initial_marking, final_marking = pm4py.discover_petri_net_heuristics(log, dependency_threshold=dependency_threshold,
-                                                  and_threshold=and_threshold,
-                                                  loop_two_threshold=loop_two_threshold)
+    net, initial_marking, final_marking = pm4py.discover_petri_net_heuristics(log)
     gviz = pn_visualizer.apply(net, initial_marking, final_marking)
     output_path = "src/temp/heuristic_petrinet.png"
     diagram_visual.save(gviz, output_path)
