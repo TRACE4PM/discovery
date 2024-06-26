@@ -299,7 +299,5 @@ async def process_animate(file_path):
         raise HTTPException(status_code=404, detail="HTML file not found")
 
     # Read and return the HTML content
-    with open(html_file_path, 'r') as file:
-        html_content = file.read()
 
-    return html_content
+    return html_file_path
