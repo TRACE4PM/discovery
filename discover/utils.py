@@ -72,7 +72,7 @@ def generate_zip(diagram_path, pnml_path, qual_path):
 
     # Check to see if the zip file is created
     if os.path.exists(zip_path):
-        return "ZIP file created :", zip_path
+        return zip_path
     else:
         return "ZIP file not created"
 
