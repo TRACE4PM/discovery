@@ -55,7 +55,7 @@ def latest_image():
 def generate_zip(diagram_path, pnml_path, qual_path):
     # create a zip file containing the png of the model, its quality and the pnml file
 
-    zip_path = "src/temp/Zipped_file.zip"
+    zip_path = "temp/Zipped_file.zip"
     with ZipFile(zip_path, 'w') as zip_object:
         # Adding files that need to be zipped
         zip_object.write(pnml_path, arcname='pnml_file.pnml')
@@ -114,7 +114,7 @@ def calculate_quality(log, net, initial_marking, final_marking, fitness_approach
 
     results = QualityResult(Fitness=fitness, Precision= precision, Simplicity=simplicity, Generalization=generalization)
 
-    json_path = "src/temp/quality.json"
+    json_path = "temp/quality.json"
     json_write_start = time.time()
     with open(json_path, "w") as outfile:
         json.dump(results.json(), outfile)

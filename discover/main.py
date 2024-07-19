@@ -36,7 +36,7 @@ async def alpha_miner_algo(file, case_name, concept_name, timestamp, separator):
     # applying alpha miner of the log file
     net, initial_marking, final_marking = alpha_miner.apply(log)
     gviz = pn_visualizer.apply(net, initial_marking, final_marking)
-    output_path = "src/temp/alpha_petrinet.png"
+    output_path = "temp/alpha_petrinet.png"
     # save the petri net in a png file
     diagram_visual.save(gviz, output_path)
     return log, net, initial_marking, final_marking, output_path
@@ -59,10 +59,10 @@ async def alpha_algo_quality(file, case_name, concept_name, timestamp, separator
                                            precision_approach)
 
     # Writing the pnml file of the petri net
-    pm4py.write.write_pnml(net, initial_marking, final_marking, "src/temp/pnml_file.pnml")
+    pm4py.write.write_pnml(net, initial_marking, final_marking, "temp/pnml_file.pnml")
 
     # Creating a zip file and saving the png, pnml and quality of the resulting model
-    zip_path = generate_zip(output_path, "src/temp/pnml_file.pnml", json_path)
+    zip_path = generate_zip(output_path, "temp/pnml_file.pnml", json_path)
     return results, zip_path
 
 
@@ -76,7 +76,7 @@ async def alpha_miner_plus(file, case_name, concept_name, timestamp, separator):
     gviz = pn_visualizer.apply(net, initial_marking, final_marking)
 
     # save the petri net in a png file
-    output_path = "src/temp/alpha_plus_petrinet.png"
+    output_path = "temp/alpha_plus_petrinet.png"
     diagram_visual.save(gviz, output_path)
     return log, net, initial_marking, final_marking, output_path
 
@@ -94,9 +94,9 @@ async def alpha_miner_plus_quality(file, case_name, concept_name, timestamp, sep
     log, net, initial_marking, final_marking, output_path = await alpha_miner_plus(file, case_name, concept_name, timestamp, separator)
     results, json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach,
                                            precision_approach)
-    pm4py.write.write_pnml(net, initial_marking, final_marking, "src/temp/pnml_file.pnml")
+    pm4py.write.write_pnml(net, initial_marking, final_marking, "temp/pnml_file.pnml")
 
-    zip_path = generate_zip(output_path, "src/temp/pnml_file.pnml", json_path)
+    zip_path = generate_zip(output_path, "temp/pnml_file.pnml", json_path)
 
     return results, zip_path
 
@@ -114,7 +114,7 @@ async def freq_alpha_miner(file, case_name, concept_name, timestamp, separator):
                                variant=pn_visualizer.Variants.FREQUENCY,
                                log=log)
     # save the petri net in a png file
-    output_path = "src/temp/freq_miner_petrinet.png"
+    output_path = "temp/freq_miner_petrinet.png"
     diagram_visual.save(gviz, output_path)
     return output_path
 
@@ -136,7 +136,7 @@ async def heuristic_miner(file, case_name, concept_name, timestamp, separator, d
                                                   and_threshold=and_threshold,
                                                   loop_two_threshold=loop_two_threshold)
     gviz = hn_visualizer.apply(heuristic_net)
-    output_path = "src/temp/heuristic_net.png"
+    output_path = "temp/heuristic_net.png"
     hn_visualizer.save(gviz, output_path)
     return output_path
 
@@ -154,14 +154,14 @@ async def heuristic_miner_petri(file, case_name, concept_name, timestamp, separa
     net, initial_marking, final_marking = pm4py.discover_petri_net_heuristics(log)
 
     gviz = pn_visualizer.apply(net, initial_marking, final_marking)
-    output_path = "src/temp/heuristic_petrinet.png"
+    output_path = "temp/heuristic_petrinet.png"
     diagram_visual.save(gviz, output_path)
 
     results, json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach,
                                            precision_approach)
-    pm4py.write.write_pnml(net, initial_marking, final_marking, "src/temp/pnml_file.pnml")
+    pm4py.write.write_pnml(net, initial_marking, final_marking, "temp/pnml_file.pnml")
 
-    zip_path = generate_zip(output_path, "src/temp/pnml_file.pnml", json_path)
+    zip_path = generate_zip(output_path, "temp/pnml_file.pnml", json_path)
     return results, zip_path
 
 
@@ -173,7 +173,7 @@ async def inductive_miner(file, case_name, concept_name, timestamp, separator, n
     log = await read_files(file, case_name, concept_name, timestamp, separator)
     net, initial_marking, final_marking = pm4py.discover_petri_net_inductive(log, noise_threshold)
     gviz = pn_visualizer.apply(net, initial_marking, final_marking)
-    output_path = "src/temp/inductive_petrinet.png"
+    output_path = "temp/inductive_petrinet.png"
     diagram_visual.save(gviz, output_path)
     return log, net, initial_marking, final_marking, output_path
 
@@ -194,9 +194,9 @@ async def inductive_miner_quality(file, case_name, concept_name, timestamp, sepa
 
     results, json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach,
                                            precision_approach)
-    pm4py.write.write_pnml(net, initial_marking, final_marking, "src/temp/pnml_file")
+    pm4py.write.write_pnml(net, initial_marking, final_marking, "temp/pnml_file")
 
-    zip_path = generate_zip(output_path, "src/temp/pnml_file.pnml", json_path)
+    zip_path = generate_zip(output_path, "temp/pnml_file.pnml", json_path)
 
     return results, zip_path
 
@@ -208,7 +208,7 @@ async def inductive_miner_tree(file, case_name, concept_name, timestamp, separat
     log = await read_files(file, case_name, concept_name, timestamp, separator)
     tree = pm4py.discover_process_tree_inductive(log)
     gviz = pt_visualizer.apply(tree)
-    output_path = "src/temp/inductive_processTree.png"
+    output_path = "temp/inductive_processTree.png"
     pt_visualizer.save(gviz, output_path)
     return output_path
 
@@ -219,7 +219,7 @@ async def bpmn_model(file, case_name, concept_name, timestamp, separator):
     """
     log = await read_files(file, case_name, concept_name, timestamp, separator )
     bpmn_graph = pm4py.discover_bpmn_inductive(log)
-    output_path = "src/temp/bpmn_model.png"
+    output_path = "temp/bpmn_model.png"
     pm4py.save_vis_bpmn(bpmn_graph, output_path)
     return output_path
 
@@ -231,7 +231,7 @@ async def dfg_function(log):
         A tuple with the directly-following activities
     """
     dfg, start_activities, end_activities = pm4py.discover_dfg(log)
-    output_path = "src/temp/directly_follow.png"
+    output_path = "temp/directly_follow.png"
     pm4py.save_vis_dfg(dfg, start_activities, end_activities, output_path)
 
     return dfg, start_activities, end_activities, output_path
@@ -263,9 +263,9 @@ async def dfg_petri_quality(file, case_name, concept_name, timestamp, separator,
     net, initial_marking, final_marking = to_petri_net_invisibles_no_duplicates.apply(dfg, parameters=parameters)
     results, json_path = calculate_quality(log, net, initial_marking, final_marking, fitness_approach,
                                            precision_approach)
-    pm4py.write.write_pnml(net, initial_marking, final_marking, "src/temp/pnml_file")
+    pm4py.write.write_pnml(net, initial_marking, final_marking, "temp/pnml_file")
 
-    zip_path = generate_zip("src/temp/directly_follow.png", "src/temp/pnml_file.pnml", json_path)
+    zip_path = generate_zip("temp/directly_follow.png", "temp/pnml_file.pnml", json_path)
     return results, zip_path
 
 
@@ -276,7 +276,7 @@ async def dfg_performance(file, case_name, concept_name, timestamp, separator):
     """
     log = await read_files(file, case_name, concept_name, timestamp, separator)
     performance_dfg, start_activities, end_activities = pm4py.discover_performance_dfg(log)
-    output_path = "src/temp/directly_follow_perfo.png"
+    output_path = "temp/directly_follow_perfo.png"
     pm4py.save_vis_performance_dfg(performance_dfg, start_activities, end_activities,
                                    output_path)
     return output_path
@@ -293,7 +293,7 @@ async def process_animate(file_path):
     if res != 0:
         raise HTTPException(status_code=500, detail="R script execution failed")
 
-    html_file_path = "src/temp/process_animation.html"
+    html_file_path = "temp/process_animation.html"
 
     if not os.path.exists(html_file_path):
         raise HTTPException(status_code=404, detail="HTML file not found")
