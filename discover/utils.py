@@ -1,3 +1,6 @@
+from datetime import datetime
+
+import chardet
 import os
 import io
 import glob
@@ -18,7 +21,12 @@ import sys
 
 async def read_csv(file, case_name, concept_name, timestamp, separator):
     # read the csv file as dataframe
-    dataframe = pd.read_csv(file, sep=separator)
+    with open(file, 'rb') as f:
+        result = chardet.detect(f.read())
+        encoding = result['encoding']
+
+        # Read the file with the detected encoding
+    dataframe = pd.read_csv(file, sep=';', encoding=encoding)
     # renaming the columns based on pm4py requirements
     dataframe.rename(columns={concept_name: 'concept:name'}, inplace=True)
     dataframe.rename(columns={case_name:'case:concept:name'}, inplace=True)
@@ -53,17 +61,19 @@ def latest_image():
 
 
 def generate_zip(diagram_path, pnml_path, qual_path):
-    # create a zip file containing the png of the model, its quality and the pnml file
 
-    zip_path = "temp/Zipped_file.zip"
+    timestamp_str = datetime.now().strftime("%m%d%H%M")  # add datetime to the models names
+
+    # create a zip file containing the png of the model, its quality and the pnml file
+    zip_path = f"temp/Zipped_file_{timestamp_str}.zip"
     with ZipFile(zip_path, 'w') as zip_object:
         # Adding files that need to be zipped
-        zip_object.write(pnml_path, arcname='pnml_file.pnml')
+        zip_object.write(pnml_path, arcname=f'pnml_file_{timestamp_str}.pnml')
 
         name_png = os.path.split(diagram_path)
 
         zip_object.write(diagram_path, arcname=name_png[1])
-        zip_object.write(qual_path, arcname="algo_quality.json")
+        zip_object.write(qual_path, arcname=f"algo_quality_{timestamp_str}.json")
 
     # Remove the files from temp folder
     os.remove(diagram_path)

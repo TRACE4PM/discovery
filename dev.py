@@ -14,14 +14,14 @@ async def main():
 
     # await inductive_miner_tree(file_path, 'client_id', 'action', 'timestamp', ";")
     # await alpha_miner_algo(file_path, 'client_id', 'action', 'timestamp', ";")
-    # await inductive_miner(file_path,'client_id', 'action', 'timestamp', ";", 1)
-    # await heuristic_miner(file_path, 'client_id', 'action', 'timestamp', ";",0, 0,0 )
+    # await inductive_miner(file_path,'client_id', 'action', 'timestamp', ";", 0)
+    # await heuristic_miner(file_path, 'client_id', 'action', 'timestamp', ";",0.5, 0.65,0.5)
     # print(await dfg_precision(file_path,'client_id', 'action', 'timestamp', ";" ))
 
-    print(await inductive_miner_quality(file_path, 'client_id', 'action', 'timestamp', ";", 1, "token based","token based"))
+    # print(await inductive_miner_quality(file_path, 'client_id', 'action', 'timestamp', ";", 0, "token based","token based"))
     print(await dfg_petri_quality(file_path, 'client_id', 'action', 'timestamp', ";","token based", "token based" ))
-    result, zip_path = await heuristic_miner_petri(file_path,'client_id', 'action', 'timestamp', ";" , "token based","token based")
-    print(result)
+    # print(await heuristic_miner_petri(file_path,'client_id', 'action', 'timestamp', ";" , "token based","token based"))
+
     # print(await process_animate(file_path))
 
 if __name__ == "__main__":
